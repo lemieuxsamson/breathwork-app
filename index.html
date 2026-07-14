@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Respiration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Respiration">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1220">
+<style>
+  :root{
+    --bg1:#0b1220;
+    --bg2:#111a2e;
+    --accent:#7dd3fc;
+    --accent2:#a78bfa;
+    --text:#e7edf5;
+    --muted:#8ea0bd;
+    --card:#141e33;
+    --card-border:#22304a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:radial-gradient(1200px 800px at 50% -10%, var(--bg2), var(--bg1) 60%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  #app{
+    display:flex;flex-direction:column;
+    height:100%;
+    padding:calc(env(safe-area-inset-top,20px) + 14px) env(safe-area-inset-right,16px) calc(env(safe-area-inset-bottom,20px) + 14px) env(safe-area-inset-left,16px);
+    max-width:520px;margin:0 auto;
+  }
+  header{
+    text-align:center;padding:6px 0 10px;
+    position:relative;
+  }
+  header h1{
+    font-size:17px;font-weight:600;margin:0;letter-spacing:0.02em;color:var(--text);
+  }
+  header p{
+    margin:2px 0 0;font-size:12px;color:var(--muted);
+  }
+  #menuBtn{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    position:absolute;top:2px;left:0;
+    width:34px;height:34px;padding:0;margin:0;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;
+    cursor:pointer;
+  }
+  #menuBtn span{
+    width:15px;height:2px;border-radius:1px;
+    background:var(--text);
+    display:block;
+  }
+
+  /* Carte de la technique sélectionnée */
+  #currentTechCard{
+    text-align:center;
+    margin:8px 0 6px;
+    padding:10px 14px;
+  }
+  #currentTechName{
+    font-size:19px;font-weight:700;color:var(--text);
+  }
+  #currentTechSub{
+    font-size:12px;color:var(--accent);margin-top:1px;letter-spacing:0.03em;
+  }
+  #currentTechDesc{
+    font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;
+    max-width:340px;margin-left:auto;margin-right:auto;
+  }
+
+  /* Overlay + drawer (menu hamburger) */
+  #menuOverlay{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.5);
+    opacity:0;pointer-events:none;
+    transition:opacity .25s;
+    z-index:40;
+  }
+  #menuOverlay.open{opacity:1;pointer-events:auto;}
+
+  #menuDrawer{
+    position:fixed;top:0;left:0;bottom:0;
+    width:min(80vw, 320px);
+    background:var(--bg2);
+    border-right:1px solid var(--card-border);
+    box-shadow:10px 0 40px rgba(0,0,0,0.4);
+    transform:translateX(-100%);
+    transition:transform .28s ease;
+    z-index:50;
+    padding:env(safe-area-inset-top,18px) 16px env(safe-area-inset-bottom,18px);
+    overflow-y:auto;
+  }
+  #menuDrawer.open{transform:translateX(0);}
+
+  #menuVolumeRow{
+    display:flex;align-items:center;gap:10px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    padding:10px 14px;
+    margin-bottom:14px;
+  }
+  #menuVolumeRow #volIcon{font-size:16px;cursor:pointer;flex-shrink:0;}
+  #menuVolumeRow input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    flex:1;height:3px;border-radius:2px;
+    background:linear-gradient(90deg, var(--accent), var(--accent2));
+    outline:none;
+  }
+  #menuVolumeRow input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:15px;height:15px;border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.4);
+    cursor:pointer;
+  }
+  #menuVolumeRow input[type=range]::-moz-range-thumb{
+    width:15px;height:15px;border-radius:50%;
+    background:#fff;border:none;
+    box-shadow:0 1px 3px rgba(0,0,0,0.4);
+    cursor:pointer;
+  }
+
+  #menuLangSection{
+    margin-bottom:18px;
+  }
+  #menuLangTitle{
+    font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;
+    margin:0 2px 6px;
+  }
+  #menuLangRow{
+    display:flex;flex-wrap:wrap;gap:8px;
+  }
+  .lang-pill{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    color:var(--text);
+    border-radius:999px;
+    padding:7px 14px;
+    font-size:12.5px;font-weight:600;
+    cursor:pointer;
+  }
+  .lang-pill.active{
+    border-color:var(--accent);
+    background:linear-gradient(135deg, rgba(125,211,252,0.18), rgba(167,139,250,0.14));
+  }
+
+  .menu-category{
+    margin-bottom:6px;
+    border-bottom:1px solid var(--card-border);
+  }
+  .menu-cat-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 4px;
+    cursor:pointer;
+    color:var(--text);
+    font-size:14px;font-weight:600;
+  }
+  .menu-cat-header .chev{
+    color:var(--muted);font-size:12px;
+    transition:transform .2s;
+  }
+  .menu-category.open .menu-cat-header .chev{transform:rotate(180deg);}
+  .menu-cat-list{
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    padding:0 2px 12px;
+  }
+  .menu-category.open .menu-cat-list{display:flex;}
+  .menu-tech-item{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    padding:10px 12px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .menu-tech-item.active{
+    border-color:var(--accent);
+    background:linear-gradient(135deg, rgba(125,211,252,0.15), rgba(167,139,250,0.12));
+  }
+  .menu-tech-item .name{font-size:13px;font-weight:600;color:var(--text);}
+  .menu-tech-item .sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+  /* Main stage */
+  #stage{
+    flex:1;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    position:relative;
+    min-height:0;
+  }
+  #ring-wrap{
+    position:relative;
+    width:min(70vw, 280px);
+    height:min(70vw, 280px);
+    display:flex;align-items:center;justify-content:center;
+  }
+  svg#progress{
+    position:absolute;inset:0;width:100%;height:100%;
+    transform:rotate(-90deg);
+  }
+  svg#progress circle{
+    fill:none;
+    stroke-width:3;
+  }
+  #progress-track{stroke:rgba(255,255,255,0.06);}
+  #progress-bar{
+    stroke:url(#gradStroke);
+    stroke-linecap:round;
+    transition:stroke-dashoffset 0.2s linear;
+  }
+  #circle{
+    width:58%;height:58%;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(167,139,250,0.55), rgba(125,211,252,0.35) 45%, rgba(125,211,252,0.08) 75%);
+    box-shadow:0 0 60px rgba(125,211,252,0.25), inset 0 0 40px rgba(255,255,255,0.08);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;
+    transform:scale(0.55);
+    transition:transform linear;
+  }
+  #phase-label{
+    font-size:18px;font-weight:600;color:var(--text);
+    text-align:center;
+  }
+  #phase-count{
+    font-size:15px;font-weight:500;color:var(--muted);
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+
+  #stats{
+    display:flex;justify-content:center;gap:28px;
+    margin:14px 0 4px;
+  }
+  .stat{text-align:center;}
+  .stat .val{font-size:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
+  .stat .lbl{font-size:11px;color:var(--muted);margin-top:1px;}
+
+  .cycle-stepper{
+    display:flex;align-items:center;gap:10px;
+  }
+  .stepper-btn{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    width:22px;height:22px;min-width:22px;min-height:22px;padding:0;margin:0;
+    border-radius:50%;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    color:var(--text);
+    font-family:inherit;
+    font-size:16px;font-weight:600;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:opacity .2s;
+    -webkit-user-select:none;user-select:none;
+  }
+  .stepper-btn:active{transform:scale(0.9);}
+  .cycle-stepper.locked .stepper-btn{
+    opacity:0;pointer-events:none;
+  }
+
+  #controls{
+    display:flex;justify-content:center;gap:14px;
+    padding:14px 0 4px;
+  }
+  #startBtn{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    background:linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#0b1220;
+    border:none;
+    border-radius:999px;
+    padding:14px 48px;
+    font-family:inherit;
+    font-size:16px;font-weight:700;
+    cursor:pointer;
+    box-shadow:0 6px 20px rgba(125,211,252,0.25);
+    transition:background .2s, box-shadow .2s;
+  }
+  #startBtn:active{transform:scale(0.97);}
+  #startBtn.running{
+    background:linear-gradient(135deg, #f87171, #fb923c);
+    box-shadow:0 6px 20px rgba(248,113,113,0.25);
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button id="menuBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <h1 id="appTitle">Respiration</h1>
+    <p id="appSubtitle">Techniques de cohérence cardiaque &amp; breathwork</p>
+  </header>
+
+  <div id="currentTechCard">
+    <div id="currentTechName">Cohérence</div>
+    <div id="currentTechSub"></div>
+    <div id="currentTechDesc"></div>
+  </div>
+
+  <div id="stage">
+    <div id="ring-wrap">
+      <svg id="progress" viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="gradStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7dd3fc"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+        </defs>
+        <circle id="progress-track" cx="100" cy="100" r="92"></circle>
+        <circle id="progress-bar" cx="100" cy="100" r="92"></circle>
+      </svg>
+      <div id="circle">
+        <div id="phase-label">Prêt</div>
+        <div id="phase-count"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="stats">
+    <div class="stat">
+      <div class="cycle-stepper">
+        <button id="cycleMinus" class="stepper-btn">−</button>
+        <div class="val" id="cycleCount">0</div>
+        <button id="cyclePlus" class="stepper-btn">+</button>
+      </div>
+      <div class="lbl" id="cyclesLbl">cycles</div>
+    </div>
+    <div class="stat"><div class="val" id="timeElapsed">00:00</div><div class="lbl" id="durationLbl">durée</div></div>
+  </div>
+
+  <div id="controls">
+    <button id="startBtn">Débuter</button>
+  </div>
+</div>
+
+<div id="menuOverlay"></div>
+<nav id="menuDrawer">
+  <div id="menuVolumeRow">
+    <span id="volIcon">🔊</span>
+    <input type="range" id="volumeSlider" min="0" max="100" value="80">
+  </div>
+  <div id="menuLangSection">
+    <div id="menuLangTitle">Langue</div>
+    <div id="menuLangRow"></div>
+  </div>
+  <div id="menuCategories"></div>
+</nav>
+
+<script>
+(function(){
+
+  // =========================================================
+  // Techniques : données structurelles (indépendantes de la langue)
+  // =========================================================
+  const TECHNIQUES = [
+    {
+      id:'coherence', defaultCycles:27,
+      phases:[ {type:'in', dur:5.5, dir:1}, {type:'out', dur:5.5, dir:-1} ]
+    },
+    {
+      id:'box', defaultCycles:5,
+      phases:[ {type:'in', dur:4, dir:1}, {type:'hold', dur:4, dir:0}, {type:'out', dur:4, dir:-1}, {type:'hold', dur:4, dir:0} ]
+    },
+    {
+      id:'tesla', defaultCycles:5,
+      phases:[ {type:'in', dur:3, dir:1}, {type:'hold', dur:6, dir:0}, {type:'out', dur:9, dir:-1} ]
+    },
+    {
+      id:'sleep', defaultCycles:4,
+      phases:[ {type:'in', dur:4, dir:1}, {type:'hold', dur:7, dir:0}, {type:'out', dur:8, dir:-1} ]
+    },
+    {
+      id:'stress', defaultCycles:6,
+      phases:[ {type:'in', dur:4, dir:1}, {type:'out', dur:8, dir:-1} ]
+    },
+    {
+      id:'energy', defaultCycles:45,
+      phases:[ {type:'in', dur:3, dir:1}, {type:'out', dur:1, dir:-1} ]
+    },
+    {
+      id:'vortex', defaultCycles:3,
+      phases:(function(){
+        const arr=[];
+        [13,8,5,3,2,1].forEach(n=>{
+          arr.push({type:'in', dur:n, dir:1});
+          arr.push({type:'out', dur:n, dir:-1});
+        });
+        return arr;
+      })()
+    },
+    {
+      id:'sriyantra', defaultCycles:3,
+      phases:(function(){
+        const arr=[];
+        [4,6,8,10].forEach(n=>{
+          arr.push({type:'in', dur:n, dir:1});
+          arr.push({type:'out', dur:n, dir:-1});
+        });
+        return arr;
+      })()
+    },
+    {
+      id:'sigh', defaultCycles:3,
+      phases:[
+        {type:'in', dur:3.5, dir:1, target:0.75},
+        {type:'in', dur:1.2, dir:1, target:1},
+        {type:'out', dur:8, dir:-1}
+      ]
+    },
+    {
+      id:'wimhof', defaultCycles:3,
+      phases:(function(){
+        const arr=[];
+        for(let i=0;i<30;i++){
+          arr.push({type:'in', dur:1.5, dir:1});
+          arr.push({type:'out', dur:1.5, dir:-1});
+        }
+        arr.push({type:'hold', dur:60, dir:0});
+        arr.push({type:'in', dur:2, dir:1, target:1});
+        arr.push({type:'hold', dur:15, dir:0});
+        return arr;
+      })()
+    }
+  ];
+
+  const CATEGORIES = [
+    { id:'calm', techIds:['coherence','stress','sigh'] },
+    { id:'focus', techIds:['box'] },
+    { id:'energy', techIds:['tesla','energy'] },
+    { id:'sleep', techIds:['sleep'] },
+    { id:'meditation', techIds:['vortex','sriyantra'] },
+    { id:'performance', techIds:['wimhof'] }
+  ];
+
+  // =========================================================
+  // Langues : liste extensible + dictionnaire de traduction
+  // =========================================================
+  const LANGUAGES = [
+    { code:'fr-CA', label:'Français' },
+    { code:'en-US', label:'English' }
+  ];
+  const FALLBACK_LANG = 'en-US';
+
+  const I18N = {
+    'fr-CA': {
+      appTitle:'Respiration',
+      appSubtitle:'Techniques de cohérence cardiaque & breathwork',
+      menuAria:'Ouvrir le menu',
+      ready:'Prêt',
+      phase:{ in:'Inspirer', hold:'Retenir', out:'Expirer' },
+      start:'Débuter', stop:'Arrêter',
+      cyclesLabel:'cycles', durationLabel:'durée',
+      langSectionTitle:'Langue',
+      cycleMinusAria:'Moins de cycles', cyclePlusAria:'Plus de cycles',
+      categories:{
+        calm:'Calme', focus:'Concentration', energy:'Énergie',
+        sleep:'Sommeil', meditation:'Méditation avancée', performance:'Performance & vitalité'
+      },
+      techniques:{
+        coherence:{ name:'Cohérence', sub:'5,5 / 5,5',
+          desc:"Respiration de cohérence cardiaque : synchronise cœur et cerveau, maximise la variabilité cardiaque (HRV). Recommandée pour des séances de 5 minutes ou plus." },
+        box:{ name:'Box', sub:'4-4-4-4',
+          desc:"Box breathing (Navy SEALs) : réduit le stress, améliore la concentration avec un rythme carré parfait. 3 à 5 cycles suffisent pour un effet notable." },
+        tesla:{ name:'Tesla', sub:'3-6-9',
+          desc:"Rythme 3-6-9 inspiré de Tesla : ratio 1:2:3, énergisant et favorise la clarté mentale." },
+        sleep:{ name:'Sommeil', sub:'4-7-8',
+          desc:"Technique 4-7-8 (Dr Andrew Weil) : active le système parasympathique, idéale avant le coucher. Weil recommande de commencer à 4 cycles, jusqu'à 8 avec la pratique." },
+        stress:{ name:'Anti-stress', sub:'4-8',
+          desc:"Ratio 1:2 : expiration deux fois plus longue que l'inspiration pour activer le nerf vague et réduire le cortisol." },
+        energy:{ name:'Énergie', sub:'3-1',
+          desc:"Respiration dynamique 3:1 : inspiration ample, expiration courte et franche pour un boost d'énergie rapide. Environ 3 minutes de pratique." },
+        vortex:{ name:'Vortex', sub:'13-8-5-3-2-1',
+          desc:"Séquence de Fibonacci inversée : chaque respiration se raccourcit (13s à 1s), créant un effet de spirale qui recentre l'attention vers l'intérieur." },
+        sriyantra:{ name:'Sri Yantra', sub:'4→10 progressif',
+          desc:"Respiration progressive inspirée de la géométrie sacrée : chaque cycle s'allonge (4 à 10 secondes) pour approfondir graduellement la détente." },
+        sigh:{ name:'Soupir physiologique', sub:'2 inspirations + 1 longue expiration',
+          desc:"Popularisé par le Dr Andrew Huberman (Stanford) : une double inspiration suivie d'une longue expiration. Calme le stress en 1 à 3 respirations." },
+        wimhof:{ name:'Wim Hof', sub:'30 respirations + rétention',
+          desc:"Hyperventilation contrôlée (30 respirations rapides) suivie d'une rétention poumons vides, puis d'une respiration de récupération. Protocole standard : 3 cycles. À pratiquer assis ou couché, jamais dans l'eau, en conduisant ou debout. Déconseillé en cas de grossesse, d'épilepsie ou de troubles cardiovasculaires. Les durées de rétention affichées sont indicatives — arrêtez dès l'envie de respirer." }
+      }
+    },
+    'en-US': {
+      appTitle:'Breathe',
+      appSubtitle:'Heart-coherence & breathwork techniques',
+      menuAria:'Open menu',
+      ready:'Ready',
+      phase:{ in:'Inhale', hold:'Hold', out:'Exhale' },
+      start:'Start', stop:'Stop',
+      cyclesLabel:'cycles', durationLabel:'duration',
+      langSectionTitle:'Language',
+      cycleMinusAria:'Fewer cycles', cyclePlusAria:'More cycles',
+      categories:{
+        calm:'Calm', focus:'Focus', energy:'Energy',
+        sleep:'Sleep', meditation:'Advanced meditation', performance:'Performance & vitality'
+      },
+      techniques:{
+        coherence:{ name:'Coherence', sub:'5.5 / 5.5',
+          desc:"Heart-coherence breathing: synchronizes heart and brain, maximizes heart-rate variability (HRV). Recommended for sessions of 5 minutes or more." },
+        box:{ name:'Box', sub:'4-4-4-4',
+          desc:"Box breathing (Navy SEALs): reduces stress and sharpens focus with a perfectly even square rhythm. 3 to 5 cycles are enough for a noticeable effect." },
+        tesla:{ name:'Tesla', sub:'3-6-9',
+          desc:"Tesla-inspired 3-6-9 rhythm: a 1:2:3 ratio that's energizing and supports mental clarity." },
+        sleep:{ name:'Sleep', sub:'4-7-8',
+          desc:"The 4-7-8 technique (Dr. Andrew Weil): activates the parasympathetic nervous system, ideal before bedtime. Weil recommends starting at 4 cycles, building up to 8 with practice." },
+        stress:{ name:'Stress relief', sub:'4-8',
+          desc:"1:2 ratio: the exhale is twice as long as the inhale, activating the vagus nerve and lowering cortisol." },
+        energy:{ name:'Energy', sub:'3-1',
+          desc:"Dynamic 3:1 breathing: a full inhale and a short, sharp exhale for a quick energy boost. About 3 minutes of practice." },
+        vortex:{ name:'Vortex', sub:'13-8-5-3-2-1',
+          desc:"Reversed Fibonacci sequence: each breath gets shorter (13s down to 1s), creating a spiraling effect that draws attention inward." },
+        sriyantra:{ name:'Sri Yantra', sub:'4→10 progressive',
+          desc:"Progressive breathing inspired by sacred geometry: each cycle grows longer (4 to 10 seconds), gradually deepening relaxation." },
+        sigh:{ name:'Physiological sigh', sub:'2 inhales + 1 long exhale',
+          desc:"Popularized by Dr. Andrew Huberman (Stanford): a double inhale followed by a long exhale. Calms stress in 1 to 3 breaths." },
+        wimhof:{ name:'Wim Hof', sub:'30 breaths + retention',
+          desc:"Controlled hyperventilation (30 rapid breaths) followed by a breath-hold on empty lungs, then a recovery breath. Standard protocol: 3 rounds. Practice sitting or lying down — never in water, while driving, or standing. Not recommended during pregnancy, epilepsy, or cardiovascular conditions. Hold times shown are indicative only — stop as soon as you feel the urge to breathe." }
+      }
+    }
+  };
+
+  function detectInitialLang(){
+    try{
+      const saved = localStorage.getItem('breathapp-lang');
+      if(saved && I18N[saved]) return saved;
+    }catch(e){}
+    const browserLangs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || FALLBACK_LANG];
+    for(const bl of browserLangs){
+      if(I18N[bl]) return bl;
+    }
+    for(const bl of browserLangs){
+      const base = (bl||'').split('-')[0].toLowerCase();
+      const match = Object.keys(I18N).find(code=>code.split('-')[0].toLowerCase()===base);
+      if(match) return match;
+    }
+    return FALLBACK_LANG;
+  }
+
+  let currentLang = detectInitialLang();
+
+  function dict(){
+    return I18N[currentLang] || I18N[FALLBACK_LANG];
+  }
+  function t(key){
+    const parts = key.split('.');
+    let node = dict();
+    for(const p of parts){ node = node && node[p]; }
+    if(node === undefined){
+      // repli sur la langue par défaut si une clé manque
+      node = I18N[FALLBACK_LANG];
+      for(const p of parts){ node = node && node[p]; }
+    }
+    return node !== undefined ? node : key;
+  }
+  function techMeta(id){ return t('techniques.'+id); }
+  function catName(id){ return t('categories.'+id); }
+
+  function techById(id){
+    return TECHNIQUES.find(x=>x.id===id);
+  }
+
+  // =========================================================
+  // État de l'application
+  // =========================================================
+  let currentTech = TECHNIQUES[0];
+  let running = false;
+  let phaseIndex = 0;
+  let phaseTimer = null;
+  let tickTimer = null;
+  let phaseStart = 0;
+  let phaseDurMs = 0;
+  let cycles = 0;
+  let targetCycles = TECHNIQUES[0].defaultCycles || 5;
+  let sessionStart = null;
+  let elapsedTimer = null;
+  let sessionTotalSeconds = 0;
+
+  const menuBtn = document.getElementById('menuBtn');
+  const menuDrawer = document.getElementById('menuDrawer');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuCategories = document.getElementById('menuCategories');
+  const menuLangRow = document.getElementById('menuLangRow');
+  const menuLangTitle = document.getElementById('menuLangTitle');
+  const appTitleEl = document.getElementById('appTitle');
+  const appSubtitleEl = document.getElementById('appSubtitle');
+  const currentTechName = document.getElementById('currentTechName');
+  const currentTechSub = document.getElementById('currentTechSub');
+  const currentTechDesc = document.getElementById('currentTechDesc');
+  const circle = document.getElementById('circle');
+  const phaseLabel = document.getElementById('phase-label');
+  const phaseCount = document.getElementById('phase-count');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const volIcon = document.getElementById('volIcon');
+  const cycleCountEl = document.getElementById('cycleCount');
+  const cycleStepper = document.querySelector('.cycle-stepper');
+  const cycleMinusBtn = document.getElementById('cycleMinus');
+  const cyclePlusBtn = document.getElementById('cyclePlus');
+  const cyclesLblEl = document.getElementById('cyclesLbl');
+  const durationLblEl = document.getElementById('durationLbl');
+  const timeElapsedEl = document.getElementById('timeElapsed');
+  const startBtn = document.getElementById('startBtn');
+  const progressBar = document.getElementById('progress-bar');
+
+  // ---- Audio engine (breath-like filtered noise, no external files) ----
+  let audioCtx = null;
+  let masterGain = null;
+  let noiseBuffer = null;
+
+  function initAudio(){
+    if(audioCtx) return;
+    try{
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = volumeLevel;
+      masterGain.connect(audioCtx.destination);
+      const bufferSize = audioCtx.sampleRate * 2;
+      noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      let last = 0;
+      for(let i=0;i<bufferSize;i++){
+        const white = Math.random()*2-1;
+        last = (last*0.92) + (white*0.08);
+        data[i] = last * 3.2;
+      }
+    }catch(e){ audioCtx = null; }
+  }
+
+  let activeSource = null;
+  let activeGain = null;
+
+  function playBreathSound(dir, durSec){
+    if(!audioCtx || dir === 0) return;
+    const now = audioCtx.currentTime;
+    const source = audioCtx.createBufferSource();
+    source.buffer = noiseBuffer;
+    source.loop = true;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 0.9;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+
+    const peak = 0.30;
+    if(dir === 1){
+      filter.frequency.setValueAtTime(280, now);
+      filter.frequency.linearRampToValueAtTime(950, now + durSec);
+      gain.gain.linearRampToValueAtTime(peak, now + durSec*0.55);
+      gain.gain.linearRampToValueAtTime(0.0001, now + durSec);
+    } else {
+      filter.frequency.setValueAtTime(950, now);
+      filter.frequency.linearRampToValueAtTime(220, now + durSec);
+      gain.gain.linearRampToValueAtTime(peak, now + durSec*0.45);
+      gain.gain.linearRampToValueAtTime(0.0001, now + durSec);
+    }
+    source.start(now);
+    source.stop(now + durSec + 0.05);
+    activeSource = source;
+    activeGain = gain;
+    source.onended = () => {
+      if(activeSource === source){ activeSource = null; activeGain = null; }
+    };
+  }
+
+  function stopBreathSound(){
+    if(!audioCtx || !activeSource) return;
+    try{
+      const now = audioCtx.currentTime;
+      activeGain.gain.cancelScheduledValues(now);
+      activeGain.gain.setValueAtTime(activeGain.gain.value, now);
+      activeGain.gain.linearRampToValueAtTime(0.0001, now + 0.06);
+      activeSource.stop(now + 0.08);
+    }catch(e){}
+    activeSource = null;
+    activeGain = null;
+  }
+
+  let volumeLevel = 0.8;
+  let lastVolume = 0.8;
+
+  function updateVolIcon(){
+    if(volumeLevel === 0) volIcon.textContent = '🔇';
+    else if(volumeLevel < 0.5) volIcon.textContent = '🔉';
+    else volIcon.textContent = '🔊';
+  }
+
+  function applyVolume(v){
+    volumeLevel = v;
+    volumeSlider.value = Math.round(v*100);
+    updateVolIcon();
+    if(masterGain) masterGain.gain.value = v;
+  }
+
+  function toggleSound(){
+    if(volumeLevel > 0){
+      lastVolume = volumeLevel;
+      applyVolume(0);
+    } else {
+      applyVolume(lastVolume || 0.8);
+    }
+  }
+  volIcon.addEventListener('click', toggleSound);
+  volumeSlider.addEventListener('input', (e)=>{
+    applyVolume(Number(e.target.value)/100);
+  });
+  updateVolIcon();
+
+  const R = 92;
+  const CIRC = 2 * Math.PI * R;
+  progressBar.style.strokeDasharray = CIRC.toFixed(2);
+  progressBar.style.strokeDashoffset = CIRC.toFixed(2);
+
+  // =========================================================
+  // Rendu du menu (langue + catégories + techniques)
+  // =========================================================
+  function renderLangRow(){
+    menuLangRow.innerHTML = '';
+    LANGUAGES.forEach(l=>{
+      const pill = document.createElement('div');
+      pill.className = 'lang-pill' + (l.code===currentLang ? ' active' : '');
+      pill.textContent = l.label;
+      pill.onclick = () => setLanguage(l.code);
+      menuLangRow.appendChild(pill);
+    });
+  }
+
+  function renderMenu(){
+    menuCategories.innerHTML = '';
+    const sortedCategories = [...CATEGORIES].sort((a,b)=>catName(a.id).localeCompare(catName(b.id), currentLang));
+    sortedCategories.forEach((cat)=>{
+      const catEl = document.createElement('div');
+      const containsCurrent = cat.techIds.includes(currentTech.id);
+      catEl.className = 'menu-category' + (containsCurrent ? ' open' : '');
+
+      const header = document.createElement('div');
+      header.className = 'menu-cat-header';
+      header.innerHTML = '<span>'+catName(cat.id)+'</span><span class="chev">▾</span>';
+      header.onclick = () => {
+        const wasOpen = catEl.classList.contains('open');
+        menuCategories.querySelectorAll('.menu-category').forEach(el=>el.classList.remove('open'));
+        if(!wasOpen) catEl.classList.add('open');
+      };
+      catEl.appendChild(header);
+
+      const list = document.createElement('div');
+      list.className = 'menu-cat-list';
+      const sortedTechs = cat.techIds
+        .map(id=>({ id, meta:techMeta(id) }))
+        .sort((a,b)=>a.meta.name.localeCompare(b.meta.name, currentLang));
+      sortedTechs.forEach(({id, meta})=>{
+        const item = document.createElement('div');
+        item.className = 'menu-tech-item' + (id===currentTech.id ? ' active' : '');
+        item.innerHTML = '<div><div class="name">'+meta.name+'</div><div class="sub">'+meta.sub+'</div></div>';
+        item.onclick = () => selectTechnique(techById(id));
+        list.appendChild(item);
+      });
+      catEl.appendChild(list);
+      menuCategories.appendChild(catEl);
+    });
+  }
+
+  function openMenu(){
+    menuDrawer.classList.add('open');
+    menuOverlay.classList.add('open');
+  }
+  function closeMenu(){
+    menuDrawer.classList.remove('open');
+    menuOverlay.classList.remove('open');
+  }
+  menuBtn.addEventListener('click', openMenu);
+  menuOverlay.addEventListener('click', closeMenu);
+
+  function updateTechCard(t){
+    const meta = techMeta(t.id);
+    currentTechName.textContent = meta.name;
+    currentTechSub.textContent = meta.sub;
+    currentTechDesc.textContent = meta.desc;
+  }
+
+  function updateCycleDisplay(){
+    const remaining = running ? Math.max(0, targetCycles - cycles) : targetCycles;
+    cycleCountEl.textContent = remaining;
+  }
+
+  function techCycleDuration(tech){
+    return tech.phases.reduce((sum,p)=>sum+p.dur, 0);
+  }
+
+  function updateDurationDisplay(){
+    if(running && sessionStart){
+      const elapsed = (Date.now() - sessionStart)/1000;
+      const remain = Math.max(0, sessionTotalSeconds - elapsed);
+      timeElapsedEl.textContent = formatTime(remain);
+    } else {
+      const total = techCycleDuration(currentTech) * targetCycles;
+      timeElapsedEl.textContent = formatTime(total);
+    }
+  }
+
+  function selectTechnique(tech){
+    if(running) reset();
+    currentTech = tech;
+    targetCycles = tech.defaultCycles || 5;
+    renderMenu();
+    updateTechCard(tech);
+    resetVisual();
+    updateCycleDisplay();
+    updateDurationDisplay();
+    closeMenu();
+  }
+
+  cycleMinusBtn.addEventListener('click', ()=>{
+    if(running) return;
+    targetCycles = Math.max(1, targetCycles - 1);
+    updateCycleDisplay();
+    updateDurationDisplay();
+  });
+  cyclePlusBtn.addEventListener('click', ()=>{
+    if(running) return;
+    targetCycles = Math.min(99, targetCycles + 1);
+    updateCycleDisplay();
+    updateDurationDisplay();
+  });
+
+  function resetVisual(){
+    phaseIndex = 0;
+    ringLevel = 0;
+    circle.style.transitionDuration = '0.3s';
+    circle.style.transform = 'scale(0.55)';
+    phaseLabel.textContent = t('ready');
+    phaseCount.textContent = '';
+    progressBar.style.transitionDuration = '0.2s';
+    progressBar.style.strokeDashoffset = CIRC.toFixed(2);
+  }
+
+  function formatTime(sec){
+    const m = Math.floor(sec/60).toString().padStart(2,'0');
+    const s = Math.floor(sec%60).toString().padStart(2,'0');
+    return m+':'+s;
+  }
+
+  function scaleForPhase(p, targetLevel){
+    if(p.dir === 0) return null;
+    return 0.55 + targetLevel * 0.45;
+  }
+
+  let ringLevel = 0;
+  let phaseStartLevel = 0;
+  let phaseEndLevel = 0;
+
+  function levelForPhase(p){
+    if(p.target !== undefined) return p.target;
+    if(p.dir === 1) return 1;
+    if(p.dir === -1) return 0;
+    return ringLevel;
+  }
+
+  function runPhase(){
+    if(!running) return;
+    const phases = currentTech.phases;
+    const p = phases[phaseIndex];
+    phaseLabel.textContent = t('phase.'+p.type);
+    phaseDurMs = p.dur * 1000;
+    phaseStart = performance.now();
+
+    phaseStartLevel = ringLevel;
+    phaseEndLevel = levelForPhase(p);
+
+    const targetScale = scaleForPhase(p, phaseEndLevel);
+    if(targetScale !== null){
+      circle.style.transitionDuration = p.dur + 's';
+      circle.style.transitionTimingFunction = 'ease-in-out';
+      void circle.offsetWidth;
+      circle.style.transform = 'scale('+targetScale+')';
+    } else {
+      circle.style.transitionDuration = '0.15s';
+    }
+
+    playBreathSound(p.dir, p.dur);
+
+    clearInterval(tickTimer);
+    tickTimer = setInterval(()=>{
+      const elapsed = performance.now() - phaseStart;
+      const remain = Math.max(0, Math.ceil((phaseDurMs - elapsed)/1000));
+      phaseCount.textContent = remain + 's';
+      const frac = Math.min(1, elapsed/phaseDurMs);
+      const level = phaseStartLevel + (phaseEndLevel - phaseStartLevel) * frac;
+      progressBar.style.transitionDuration = '0.1s';
+      progressBar.style.strokeDashoffset = (CIRC * (1-level)).toFixed(2);
+    }, 100);
+
+    clearTimeout(phaseTimer);
+    phaseTimer = setTimeout(()=>{
+      ringLevel = phaseEndLevel;
+      progressBar.style.strokeDashoffset = (CIRC * (1-ringLevel)).toFixed(2);
+      phaseIndex++;
+      if(phaseIndex >= phases.length){
+        phaseIndex = 0;
+        cycles++;
+        updateCycleDisplay();
+        if(cycles >= targetCycles){
+          reset();
+          return;
+        }
+      }
+      runPhase();
+    }, p.dur*1000);
+  }
+
+  function start(){
+    running = true;
+    cycles = 0;
+    startBtn.textContent = t('stop');
+    startBtn.classList.add('running');
+    cycleStepper.classList.add('locked');
+    sessionTotalSeconds = techCycleDuration(currentTech) * targetCycles;
+    sessionStart = Date.now();
+    elapsedTimer = setInterval(updateDurationDisplay, 1000);
+    updateCycleDisplay();
+    updateDurationDisplay();
+    runPhase();
+  }
+
+  function stop(){
+    running = false;
+    clearTimeout(phaseTimer);
+    clearInterval(tickTimer);
+    clearInterval(elapsedTimer);
+    stopBreathSound();
+  }
+
+  function reset(){
+    stop();
+    startBtn.textContent = t('start');
+    startBtn.classList.remove('running');
+    cycleStepper.classList.remove('locked');
+    cycles = 0;
+    sessionStart = null;
+    updateCycleDisplay();
+    updateDurationDisplay();
+    resetVisual();
+  }
+
+  startBtn.addEventListener('click', ()=>{
+    initAudio();
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if(running){ reset(); } else { start(); }
+  });
+
+  // =========================================================
+  // Application de la langue à toute l'interface
+  // =========================================================
+  function applyLanguage(){
+    document.documentElement.lang = currentLang.split('-')[0];
+    appTitleEl.textContent = t('appTitle');
+    appSubtitleEl.textContent = t('appSubtitle');
+    menuBtn.setAttribute('aria-label', t('menuAria'));
+    menuLangTitle.textContent = t('langSectionTitle');
+    cyclesLblEl.textContent = t('cyclesLabel');
+    durationLblEl.textContent = t('durationLabel');
+    cycleMinusBtn.setAttribute('aria-label', t('cycleMinusAria'));
+    cyclePlusBtn.setAttribute('aria-label', t('cyclePlusAria'));
+    startBtn.textContent = running ? t('stop') : t('start');
+    if(running){
+      const p = currentTech.phases[phaseIndex];
+      phaseLabel.textContent = t('phase.'+p.type);
+    } else {
+      phaseLabel.textContent = t('ready');
+    }
+    renderLangRow();
+    renderMenu();
+    updateTechCard(currentTech);
+    updateCycleDisplay();
+    updateDurationDisplay();
+  }
+
+  function setLanguage(code){
+    if(!I18N[code]) return;
+    currentLang = code;
+    try{ localStorage.setItem('breathapp-lang', code); }catch(e){}
+    applyLanguage();
+  }
+
+  renderMenu();
+  updateTechCard(currentTech);
+  updateCycleDisplay();
+  updateDurationDisplay();
+  applyLanguage();
+
+  // keep screen awake attempt (best-effort, ignored if unsupported)
+  let wakeLock = null;
+  async function requestWakeLock(){
+    try{
+      if('wakeLock' in navigator){
+        wakeLock = await navigator.wakeLock.request('screen');
+      }
+    }catch(e){}
+  }
+  document.addEventListener('visibilitychange', async ()=>{
+    if(wakeLock !== null && document.visibilityState === 'visible' && running){
+      await requestWakeLock();
+    }
+  });
+  startBtn.addEventListener('click', requestWakeLock);
+})();
+</script>
+</body>
+</html>
