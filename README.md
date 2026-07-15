@@ -1,5 +1,7 @@
 # Respiration 🌬️
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 Application web de respiration guidée (breathwork & cohérence cardiaque), conçue comme une PWA (Progressive Web App) installable sur l'écran d'accueil iOS/Android — sans backend, sans dépendance externe, 100 % hors ligne après le premier chargement.
 
 **Démo :** https://breath.lemieuxsamson.com
@@ -54,4 +56,5 @@ Les techniques présentées (notamment Wim Hof) impliquent de l'hyperventilation
 
 ## Licence
 
-Projet personnel — usage libre.
+Projet distribué sous licence [MIT](LICENSE) — libre de copier, modifier et redistribuer, y compris à des fins commerciales, à condition de conserver la mention de copyright.
+
