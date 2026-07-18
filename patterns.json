@@ -1,0 +1,746 @@
+{
+  "dataVersion": 1,
+  "techniques": [
+    {
+      "id": "coherence",
+      "defaultCycles": 27,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 5.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 5.5,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "box",
+      "defaultCycles": 5,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 4,
+          "dir": 1
+        },
+        {
+          "type": "hold",
+          "dur": 4,
+          "dir": 0
+        },
+        {
+          "type": "out",
+          "dur": 4,
+          "dir": -1
+        },
+        {
+          "type": "hold",
+          "dur": 4,
+          "dir": 0
+        }
+      ]
+    },
+    {
+      "id": "tesla",
+      "defaultCycles": 5,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 3,
+          "dir": 1
+        },
+        {
+          "type": "hold",
+          "dur": 6,
+          "dir": 0
+        },
+        {
+          "type": "out",
+          "dur": 9,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "sleep",
+      "defaultCycles": 4,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 4,
+          "dir": 1
+        },
+        {
+          "type": "hold",
+          "dur": 7,
+          "dir": 0
+        },
+        {
+          "type": "out",
+          "dur": 8,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "stress",
+      "defaultCycles": 6,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 4,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 8,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "energy",
+      "defaultCycles": 45,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 3,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "vortex",
+      "defaultCycles": 3,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 13,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 13,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 8,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 8,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 3,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 3,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 2,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 2,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "sriyantra",
+      "defaultCycles": 3,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 4,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 4,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 6,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 6,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 8,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 8,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 10,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 10,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "sigh",
+      "defaultCycles": 3,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 3.5,
+          "dir": 1,
+          "target": 0.75
+        },
+        {
+          "type": "in",
+          "dur": 1.2,
+          "dir": 1,
+          "target": 1
+        },
+        {
+          "type": "out",
+          "dur": 8,
+          "dir": -1
+        }
+      ]
+    },
+    {
+      "id": "wimhof",
+      "defaultCycles": 3,
+      "phases": [
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "in",
+          "dur": 1.5,
+          "dir": 1
+        },
+        {
+          "type": "out",
+          "dur": 1.5,
+          "dir": -1
+        },
+        {
+          "type": "hold",
+          "dur": 60,
+          "dir": 0
+        },
+        {
+          "type": "in",
+          "dur": 2,
+          "dir": 1,
+          "target": 1
+        },
+        {
+          "type": "hold",
+          "dur": 15,
+          "dir": 0
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "calm",
+      "techIds": [
+        "coherence",
+        "stress",
+        "sigh"
+      ]
+    },
+    {
+      "id": "focus",
+      "techIds": [
+        "box"
+      ]
+    },
+    {
+      "id": "energy",
+      "techIds": [
+        "tesla",
+        "energy"
+      ]
+    },
+    {
+      "id": "sleep",
+      "techIds": [
+        "sleep"
+      ]
+    },
+    {
+      "id": "meditation",
+      "techIds": [
+        "vortex",
+        "sriyantra"
+      ]
+    },
+    {
+      "id": "performance",
+      "techIds": [
+        "wimhof"
+      ]
+    }
+  ],
+  "i18n": {
+    "fr-CA": {
+      "categories": {
+        "calm": "Calme",
+        "focus": "Concentration",
+        "energy": "Énergie",
+        "sleep": "Sommeil",
+        "meditation": "Méditation avancée",
+        "performance": "Performance & vitalité"
+      },
+      "techniques": {
+        "coherence": {
+          "name": "Cohérence",
+          "sub": "5,5 / 5,5",
+          "desc": "Respiration de cohérence cardiaque : synchronise cœur et cerveau, maximise la variabilité cardiaque (HRV). Recommandée pour des séances de 5 minutes ou plus."
+        },
+        "box": {
+          "name": "Box",
+          "sub": "4-4-4-4",
+          "desc": "Box breathing (Navy SEALs) : réduit le stress, améliore la concentration avec un rythme carré parfait. 3 à 5 cycles suffisent pour un effet notable."
+        },
+        "tesla": {
+          "name": "Tesla",
+          "sub": "3-6-9",
+          "desc": "Rythme 3-6-9 inspiré de Tesla : ratio 1:2:3, énergisant et favorise la clarté mentale."
+        },
+        "sleep": {
+          "name": "Sommeil",
+          "sub": "4-7-8",
+          "desc": "Technique 4-7-8 (Dr Andrew Weil) : active le système parasympathique, idéale avant le coucher. Weil recommande de commencer à 4 cycles, jusqu'à 8 avec la pratique."
+        },
+        "stress": {
+          "name": "Anti-stress",
+          "sub": "4-8",
+          "desc": "Ratio 1:2 : expiration deux fois plus longue que l'inspiration pour activer le nerf vague et réduire le cortisol."
+        },
+        "energy": {
+          "name": "Énergie",
+          "sub": "3-1",
+          "desc": "Respiration dynamique 3:1 : inspiration ample, expiration courte et franche pour un boost d'énergie rapide. Environ 3 minutes de pratique."
+        },
+        "vortex": {
+          "name": "Vortex",
+          "sub": "13-8-5-3-2-1",
+          "desc": "Séquence de Fibonacci inversée : chaque respiration se raccourcit (13s à 1s), créant un effet de spirale qui recentre l'attention vers l'intérieur."
+        },
+        "sriyantra": {
+          "name": "Sri Yantra",
+          "sub": "4→10 progressif",
+          "desc": "Respiration progressive inspirée de la géométrie sacrée : chaque cycle s'allonge (4 à 10 secondes) pour approfondir graduellement la détente."
+        },
+        "sigh": {
+          "name": "Soupir physiologique",
+          "sub": "2 inspirations + 1 longue expiration",
+          "desc": "Popularisé par le Dr Andrew Huberman (Stanford) : une double inspiration suivie d'une longue expiration. Calme le stress en 1 à 3 respirations."
+        },
+        "wimhof": {
+          "name": "Wim Hof",
+          "sub": "30 respirations + rétention",
+          "desc": "Hyperventilation contrôlée (30 respirations rapides) suivie d'une rétention poumons vides, puis d'une respiration de récupération. Protocole standard : 3 cycles. À pratiquer assis ou couché, jamais dans l'eau, en conduisant ou debout. Déconseillé en cas de grossesse, d'épilepsie ou de troubles cardiovasculaires. Les durées de rétention affichées sont indicatives — arrêtez dès l'envie de respirer."
+        }
+      }
+    },
+    "en-US": {
+      "categories": {
+        "calm": "Calm",
+        "focus": "Focus",
+        "energy": "Energy",
+        "sleep": "Sleep",
+        "meditation": "Advanced meditation",
+        "performance": "Performance & vitality"
+      },
+      "techniques": {
+        "coherence": {
+          "name": "Coherence",
+          "sub": "5.5 / 5.5",
+          "desc": "Heart-coherence breathing: synchronizes heart and brain, maximizes heart-rate variability (HRV). Recommended for sessions of 5 minutes or more."
+        },
+        "box": {
+          "name": "Box",
+          "sub": "4-4-4-4",
+          "desc": "Box breathing (Navy SEALs): reduces stress and sharpens focus with a perfectly even square rhythm. 3 to 5 cycles are enough for a noticeable effect."
+        },
+        "tesla": {
+          "name": "Tesla",
+          "sub": "3-6-9",
+          "desc": "Tesla-inspired 3-6-9 rhythm: a 1:2:3 ratio that's energizing and supports mental clarity."
+        },
+        "sleep": {
+          "name": "Sleep",
+          "sub": "4-7-8",
+          "desc": "The 4-7-8 technique (Dr. Andrew Weil): activates the parasympathetic nervous system, ideal before bedtime. Weil recommends starting at 4 cycles, building up to 8 with practice."
+        },
+        "stress": {
+          "name": "Stress relief",
+          "sub": "4-8",
+          "desc": "1:2 ratio: the exhale is twice as long as the inhale, activating the vagus nerve and lowering cortisol."
+        },
+        "energy": {
+          "name": "Energy",
+          "sub": "3-1",
+          "desc": "Dynamic 3:1 breathing: a full inhale and a short, sharp exhale for a quick energy boost. About 3 minutes of practice."
+        },
+        "vortex": {
+          "name": "Vortex",
+          "sub": "13-8-5-3-2-1",
+          "desc": "Reversed Fibonacci sequence: each breath gets shorter (13s down to 1s), creating a spiraling effect that draws attention inward."
+        },
+        "sriyantra": {
+          "name": "Sri Yantra",
+          "sub": "4→10 progressive",
+          "desc": "Progressive breathing inspired by sacred geometry: each cycle grows longer (4 to 10 seconds), gradually deepening relaxation."
+        },
+        "sigh": {
+          "name": "Physiological sigh",
+          "sub": "2 inhales + 1 long exhale",
+          "desc": "Popularized by Dr. Andrew Huberman (Stanford): a double inhale followed by a long exhale. Calms stress in 1 to 3 breaths."
+        },
+        "wimhof": {
+          "name": "Wim Hof",
+          "sub": "30 breaths + retention",
+          "desc": "Controlled hyperventilation (30 rapid breaths) followed by a breath-hold on empty lungs, then a recovery breath. Standard protocol: 3 rounds. Practice sitting or lying down — never in water, while driving, or standing. Not recommended during pregnancy, epilepsy, or cardiovascular conditions. Hold times shown are indicative only — stop as soon as you feel the urge to breathe."
+        }
+      }
+    }
+  }
+}

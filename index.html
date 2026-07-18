@@ -481,97 +481,232 @@
 (function(){
 
   // =========================================================
-  // Techniques : données structurelles (indépendantes de la langue)
+  // Patterns (techniques + catégories + leurs traductions) :
+  // chargés depuis patterns.json, mis en cache dans localStorage
+  // pour l'usage hors ligne, avec repli intégré en dernier recours.
   // =========================================================
-  const TECHNIQUES = [
-    {
-      id:'coherence', defaultCycles:27,
-      phases:[ {type:'in', dur:5.5, dir:1}, {type:'out', dur:5.5, dir:-1} ]
-    },
-    {
-      id:'box', defaultCycles:5,
-      phases:[ {type:'in', dur:4, dir:1}, {type:'hold', dur:4, dir:0}, {type:'out', dur:4, dir:-1}, {type:'hold', dur:4, dir:0} ]
-    },
-    {
-      id:'tesla', defaultCycles:5,
-      phases:[ {type:'in', dur:3, dir:1}, {type:'hold', dur:6, dir:0}, {type:'out', dur:9, dir:-1} ]
-    },
-    {
-      id:'sleep', defaultCycles:4,
-      phases:[ {type:'in', dur:4, dir:1}, {type:'hold', dur:7, dir:0}, {type:'out', dur:8, dir:-1} ]
-    },
-    {
-      id:'stress', defaultCycles:6,
-      phases:[ {type:'in', dur:4, dir:1}, {type:'out', dur:8, dir:-1} ]
-    },
-    {
-      id:'energy', defaultCycles:45,
-      phases:[ {type:'in', dur:3, dir:1}, {type:'out', dur:1, dir:-1} ]
-    },
-    {
-      id:'vortex', defaultCycles:3,
-      phases:(function(){
-        const arr=[];
-        [13,8,5,3,2,1].forEach(n=>{
-          arr.push({type:'in', dur:n, dir:1});
-          arr.push({type:'out', dur:n, dir:-1});
-        });
-        return arr;
-      })()
-    },
-    {
-      id:'sriyantra', defaultCycles:3,
-      phases:(function(){
-        const arr=[];
-        [4,6,8,10].forEach(n=>{
-          arr.push({type:'in', dur:n, dir:1});
-          arr.push({type:'out', dur:n, dir:-1});
-        });
-        return arr;
-      })()
-    },
-    {
-      id:'sigh', defaultCycles:3,
-      phases:[
-        {type:'in', dur:3.5, dir:1, target:0.75},
-        {type:'in', dur:1.2, dir:1, target:1},
-        {type:'out', dur:8, dir:-1}
-      ]
-    },
-    {
-      id:'wimhof', defaultCycles:3,
-      phases:(function(){
-        const arr=[];
-        for(let i=0;i<30;i++){
-          arr.push({type:'in', dur:1.5, dir:1});
-          arr.push({type:'out', dur:1.5, dir:-1});
+  const PATTERNS_URL = './patterns.json';
+  const PATTERNS_STORAGE_KEY = 'breathapp-patterns-v1';
+  const PATTERNS_MAX_BYTES = 500000; // garde-fou taille (500 Ko)
+  const FETCH_TIMEOUT_MS = 6000;
+
+  const SAFE_ID_RE = /^[a-z][a-z0-9_-]{0,39}$/;
+  const SAFE_LANG_RE = /^[a-z]{2}(-[A-Z]{2})?$/;
+  const FORBIDDEN_KEYS = ['__proto__', 'constructor', 'prototype'];
+
+  // ---- Repli intégré : identique à patterns.json au moment du build ----
+  // Garantit un fonctionnement 100% hors ligne même au tout premier lancement
+  // si jamais le réseau est indisponible et qu'aucun cache n'existe encore.
+  const EMBEDDED_FALLBACK_PATTERNS = {
+    dataVersion: 1,
+    techniques: [
+      { id:'coherence', defaultCycles:27,
+        phases:[ {type:'in', dur:5.5, dir:1}, {type:'out', dur:5.5, dir:-1} ] },
+      { id:'box', defaultCycles:5,
+        phases:[ {type:'in', dur:4, dir:1}, {type:'hold', dur:4, dir:0}, {type:'out', dur:4, dir:-1}, {type:'hold', dur:4, dir:0} ] },
+      { id:'tesla', defaultCycles:5,
+        phases:[ {type:'in', dur:3, dir:1}, {type:'hold', dur:6, dir:0}, {type:'out', dur:9, dir:-1} ] },
+      { id:'sleep', defaultCycles:4,
+        phases:[ {type:'in', dur:4, dir:1}, {type:'hold', dur:7, dir:0}, {type:'out', dur:8, dir:-1} ] },
+      { id:'stress', defaultCycles:6,
+        phases:[ {type:'in', dur:4, dir:1}, {type:'out', dur:8, dir:-1} ] },
+      { id:'energy', defaultCycles:45,
+        phases:[ {type:'in', dur:3, dir:1}, {type:'out', dur:1, dir:-1} ] },
+      { id:'vortex', defaultCycles:3,
+        phases:(function(){ const a=[]; [13,8,5,3,2,1].forEach(n=>{ a.push({type:'in',dur:n,dir:1}); a.push({type:'out',dur:n,dir:-1}); }); return a; })() },
+      { id:'sriyantra', defaultCycles:3,
+        phases:(function(){ const a=[]; [4,6,8,10].forEach(n=>{ a.push({type:'in',dur:n,dir:1}); a.push({type:'out',dur:n,dir:-1}); }); return a; })() },
+      { id:'sigh', defaultCycles:3,
+        phases:[ {type:'in', dur:3.5, dir:1, target:0.75}, {type:'in', dur:1.2, dir:1, target:1}, {type:'out', dur:8, dir:-1} ] },
+      { id:'wimhof', defaultCycles:3,
+        phases:(function(){
+          const a=[];
+          for(let i=0;i<30;i++){ a.push({type:'in',dur:1.5,dir:1}); a.push({type:'out',dur:1.5,dir:-1}); }
+          a.push({type:'hold',dur:60,dir:0}); a.push({type:'in',dur:2,dir:1,target:1}); a.push({type:'hold',dur:15,dir:0});
+          return a;
+        })() }
+    ],
+    categories: [
+      { id:'calm', techIds:['coherence','stress','sigh'] },
+      { id:'focus', techIds:['box'] },
+      { id:'energy', techIds:['tesla','energy'] },
+      { id:'sleep', techIds:['sleep'] },
+      { id:'meditation', techIds:['vortex','sriyantra'] },
+      { id:'performance', techIds:['wimhof'] }
+    ],
+    i18n: {
+      'fr-CA': {
+        categories:{ calm:'Calme', focus:'Concentration', energy:'Énergie', sleep:'Sommeil', meditation:'Méditation avancée', performance:'Performance & vitalité' },
+        techniques:{
+          coherence:{ name:'Cohérence', sub:'5,5 / 5,5', desc:"Respiration de cohérence cardiaque : synchronise cœur et cerveau, maximise la variabilité cardiaque (HRV). Recommandée pour des séances de 5 minutes ou plus." },
+          box:{ name:'Box', sub:'4-4-4-4', desc:"Box breathing (Navy SEALs) : réduit le stress, améliore la concentration avec un rythme carré parfait. 3 à 5 cycles suffisent pour un effet notable." },
+          tesla:{ name:'Tesla', sub:'3-6-9', desc:"Rythme 3-6-9 inspiré de Tesla : ratio 1:2:3, énergisant et favorise la clarté mentale." },
+          sleep:{ name:'Sommeil', sub:'4-7-8', desc:"Technique 4-7-8 (Dr Andrew Weil) : active le système parasympathique, idéale avant le coucher. Weil recommande de commencer à 4 cycles, jusqu'à 8 avec la pratique." },
+          stress:{ name:'Anti-stress', sub:'4-8', desc:"Ratio 1:2 : expiration deux fois plus longue que l'inspiration pour activer le nerf vague et réduire le cortisol." },
+          energy:{ name:'Énergie', sub:'3-1', desc:"Respiration dynamique 3:1 : inspiration ample, expiration courte et franche pour un boost d'énergie rapide. Environ 3 minutes de pratique." },
+          vortex:{ name:'Vortex', sub:'13-8-5-3-2-1', desc:"Séquence de Fibonacci inversée : chaque respiration se raccourcit (13s à 1s), créant un effet de spirale qui recentre l'attention vers l'intérieur." },
+          sriyantra:{ name:'Sri Yantra', sub:'4→10 progressif', desc:"Respiration progressive inspirée de la géométrie sacrée : chaque cycle s'allonge (4 à 10 secondes) pour approfondir graduellement la détente." },
+          sigh:{ name:'Soupir physiologique', sub:'2 inspirations + 1 longue expiration', desc:"Popularisé par le Dr Andrew Huberman (Stanford) : une double inspiration suivie d'une longue expiration. Calme le stress en 1 à 3 respirations." },
+          wimhof:{ name:'Wim Hof', sub:'30 respirations + rétention', desc:"Hyperventilation contrôlée (30 respirations rapides) suivie d'une rétention poumons vides, puis d'une respiration de récupération. Protocole standard : 3 cycles. À pratiquer assis ou couché, jamais dans l'eau, en conduisant ou debout. Déconseillé en cas de grossesse, d'épilepsie ou de troubles cardiovasculaires. Les durées de rétention affichées sont indicatives — arrêtez dès l'envie de respirer." }
         }
-        arr.push({type:'hold', dur:60, dir:0});
-        arr.push({type:'in', dur:2, dir:1, target:1});
-        arr.push({type:'hold', dur:15, dir:0});
-        return arr;
-      })()
+      },
+      'en-US': {
+        categories:{ calm:'Calm', focus:'Focus', energy:'Energy', sleep:'Sleep', meditation:'Advanced meditation', performance:'Performance & vitality' },
+        techniques:{
+          coherence:{ name:'Coherence', sub:'5.5 / 5.5', desc:"Heart-coherence breathing: synchronizes heart and brain, maximizes heart-rate variability (HRV). Recommended for sessions of 5 minutes or more." },
+          box:{ name:'Box', sub:'4-4-4-4', desc:"Box breathing (Navy SEALs): reduces stress and sharpens focus with a perfectly even square rhythm. 3 to 5 cycles are enough for a noticeable effect." },
+          tesla:{ name:'Tesla', sub:'3-6-9', desc:"Tesla-inspired 3-6-9 rhythm: a 1:2:3 ratio that's energizing and supports mental clarity." },
+          sleep:{ name:'Sleep', sub:'4-7-8', desc:"The 4-7-8 technique (Dr. Andrew Weil): activates the parasympathetic nervous system, ideal before bedtime. Weil recommends starting at 4 cycles, building up to 8 with practice." },
+          stress:{ name:'Stress relief', sub:'4-8', desc:"1:2 ratio: the exhale is twice as long as the inhale, activating the vagus nerve and lowering cortisol." },
+          energy:{ name:'Energy', sub:'3-1', desc:"Dynamic 3:1 breathing: a full inhale and a short, sharp exhale for a quick energy boost. About 3 minutes of practice." },
+          vortex:{ name:'Vortex', sub:'13-8-5-3-2-1', desc:"Reversed Fibonacci sequence: each breath gets shorter (13s down to 1s), creating a spiraling effect that draws attention inward." },
+          sriyantra:{ name:'Sri Yantra', sub:'4→10 progressive', desc:"Progressive breathing inspired by sacred geometry: each cycle grows longer (4 to 10 seconds), gradually deepening relaxation." },
+          sigh:{ name:'Physiological sigh', sub:'2 inhales + 1 long exhale', desc:"Popularized by Dr. Andrew Huberman (Stanford): a double inhale followed by a long exhale. Calms stress in 1 to 3 breaths." },
+          wimhof:{ name:'Wim Hof', sub:'30 breaths + retention', desc:"Controlled hyperventilation (30 rapid breaths) followed by a breath-hold on empty lungs, then a recovery breath. Standard protocol: 3 rounds. Practice sitting or lying down — never in water, while driving, or standing. Not recommended during pregnancy, epilepsy, or cardiovascular conditions. Hold times shown are indicative only — stop as soon as you feel the urge to breathe." }
+        }
+      }
     }
-  ];
+  };
 
-  const CATEGORIES = [
-    { id:'calm', techIds:['coherence','stress','sigh'] },
-    { id:'focus', techIds:['box'] },
-    { id:'energy', techIds:['tesla','energy'] },
-    { id:'sleep', techIds:['sleep'] },
-    { id:'meditation', techIds:['vortex','sriyantra'] },
-    { id:'performance', techIds:['wimhof'] }
-  ];
+  // ---- Validation stricte (défense contre l'injection / la corruption) ----
+  function isSafeId(v){
+    return typeof v === 'string' && SAFE_ID_RE.test(v) && !FORBIDDEN_KEYS.includes(v);
+  }
+  function isPlainString(v, maxLen){
+    return typeof v === 'string' && v.length > 0 && v.length <= maxLen;
+  }
+  function isFiniteNumberInRange(v, min, max){
+    return typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
+  }
+  function hasForbiddenKeys(obj, depth){
+    if(depth > 8 || obj === null || typeof obj !== 'object') return false;
+    for(const k of Object.keys(obj)){
+      if(FORBIDDEN_KEYS.includes(k)) return true;
+      if(hasForbiddenKeys(obj[k], depth+1)) return true;
+    }
+    return false;
+  }
+  function validatePhase(p){
+    if(!p || typeof p !== 'object') return false;
+    if(!['in','hold','out'].includes(p.type)) return false;
+    if(![-1, 0, 1].includes(p.dir)) return false;
+    if(!isFiniteNumberInRange(p.dur, 0.1, 300)) return false;
+    if(p.target !== undefined && !isFiniteNumberInRange(p.target, 0, 1)) return false;
+    return true;
+  }
+  function validateTechnique(tech){
+    if(!tech || typeof tech !== 'object') return false;
+    if(!isSafeId(tech.id)) return false;
+    if(!Number.isInteger(tech.defaultCycles) || tech.defaultCycles < 1 || tech.defaultCycles > 999) return false;
+    if(!Array.isArray(tech.phases) || tech.phases.length < 1 || tech.phases.length > 200) return false;
+    return tech.phases.every(validatePhase);
+  }
+  function validateCategory(cat, validTechIds){
+    if(!cat || typeof cat !== 'object') return false;
+    if(!isSafeId(cat.id)) return false;
+    if(!Array.isArray(cat.techIds) || cat.techIds.length < 1 || cat.techIds.length > 50) return false;
+    return cat.techIds.every(id => isSafeId(id) && validTechIds.has(id));
+  }
+  function validateTechMeta(meta){
+    return !!meta && typeof meta === 'object'
+      && isPlainString(meta.name, 60)
+      && isPlainString(meta.sub, 80)
+      && isPlainString(meta.desc, 800);
+  }
+  function validateI18nForLang(langObj, techIds, catIds){
+    if(!langObj || typeof langObj !== 'object') return false;
+    if(!langObj.categories || typeof langObj.categories !== 'object') return false;
+    for(const cid of catIds){ if(!isPlainString(langObj.categories[cid], 60)) return false; }
+    if(!langObj.techniques || typeof langObj.techniques !== 'object') return false;
+    for(const tid of techIds){ if(!validateTechMeta(langObj.techniques[tid])) return false; }
+    return true;
+  }
+  function validatePatternsData(data){
+    try{
+      if(!data || typeof data !== 'object') return false;
+      if(hasForbiddenKeys(data, 0)) return false;
+      if(!Number.isInteger(data.dataVersion) || data.dataVersion < 1) return false;
+      if(!Array.isArray(data.techniques) || data.techniques.length < 1 || data.techniques.length > 100) return false;
+      if(!data.techniques.every(validateTechnique)) return false;
+      const techIds = new Set(data.techniques.map(t=>t.id));
+      if(techIds.size !== data.techniques.length) return false; // pas de doublons d'id
+      if(!Array.isArray(data.categories) || data.categories.length < 1 || data.categories.length > 50) return false;
+      if(!data.categories.every(c=>validateCategory(c, techIds))) return false;
+      const catIds = data.categories.map(c=>c.id);
+      if(new Set(catIds).size !== catIds.length) return false;
+      if(!data.i18n || typeof data.i18n !== 'object') return false;
+      const langCodes = Object.keys(data.i18n);
+      if(langCodes.length < 1 || langCodes.length > 30) return false;
+      for(const lc of langCodes){
+        if(!SAFE_LANG_RE.test(lc)) return false;
+        if(!validateI18nForLang(data.i18n[lc], techIds, catIds)) return false;
+      }
+      return true;
+    }catch(e){ return false; }
+  }
+
+  // ---- Lecture / écriture du cache localStorage (toujours validées) ----
+  function loadCachedPatterns(){
+    try{
+      const raw = localStorage.getItem(PATTERNS_STORAGE_KEY);
+      if(!raw || raw.length > PATTERNS_MAX_BYTES) return null;
+      const parsed = JSON.parse(raw);
+      if(!validatePatternsData(parsed)){
+        localStorage.removeItem(PATTERNS_STORAGE_KEY); // purge une entrée corrompue ou invalide
+        return null;
+      }
+      return parsed;
+    }catch(e){
+      try{ localStorage.removeItem(PATTERNS_STORAGE_KEY); }catch(e2){}
+      return null;
+    }
+  }
+  function saveCachedPatterns(data){
+    try{
+      if(!validatePatternsData(data)) return false;
+      localStorage.setItem(PATTERNS_STORAGE_KEY, JSON.stringify(data));
+      return true;
+    }catch(e){ return false; }
+  }
+
+  // ---- Récupération réseau (silencieuse, avec délai d'expiration) ----
+  async function fetchRemotePatterns(){
+    try{
+      const controller = new AbortController();
+      const timeoutId = setTimeout(()=>controller.abort(), FETCH_TIMEOUT_MS);
+      const res = await fetch(PATTERNS_URL + '?t=' + Date.now(), { signal: controller.signal, cache:'no-store' });
+      clearTimeout(timeoutId);
+      if(!res.ok) return null;
+      const raw = await res.text();
+      if(raw.length > PATTERNS_MAX_BYTES) return null;
+      const data = JSON.parse(raw);
+      if(!validatePatternsData(data)) return null;
+      return data;
+    }catch(e){
+      return null; // hors ligne, timeout, JSON invalide, etc. — échec silencieux
+    }
+  }
+
+  // ---- Initialisation : cache validé > repli intégré (validé lui aussi) ----
+  let patternsData = loadCachedPatterns();
+  if(!patternsData){
+    patternsData = validatePatternsData(EMBEDDED_FALLBACK_PATTERNS) ? EMBEDDED_FALLBACK_PATTERNS : null;
+  }
+  if(!patternsData){
+    // Filet de sécurité ultime — ne devrait jamais se produire
+    patternsData = { dataVersion:0, techniques:[], categories:[], i18n:{} };
+  }
 
   // =========================================================
-  // Langues : liste extensible + dictionnaire de traduction
+  // Langues : liste extensible + dictionnaire de traduction (interface uniquement —
+  // le contenu des techniques/catégories vit dans patternsData, voir plus haut)
   // =========================================================
   const LANGUAGES = [
     { code:'fr-CA', label:'Français' },
     { code:'en-US', label:'English' }
   ];
   const FALLBACK_LANG = 'en-US';
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.1.0';
   const REPO_URL = 'https://github.com/lemieuxsamson/breathwork-app';
   const ISSUES_NEW_URL = REPO_URL + '/issues/new';
   const CHANGELOG_URL = REPO_URL + '/blob/main/CHANGELOG.md';
@@ -594,33 +729,7 @@
       aboutRepoLabel:'Voir le code sur GitHub',
       aboutSuggestLabel:'Suggérer une technique ou une fonctionnalité',
       aboutChangelogLabel:'Notes de version',
-      aboutLicenseLine:'Distribué sous licence MIT',
-      categories:{
-        calm:'Calme', focus:'Concentration', energy:'Énergie',
-        sleep:'Sommeil', meditation:'Méditation avancée', performance:'Performance & vitalité'
-      },
-      techniques:{
-        coherence:{ name:'Cohérence', sub:'5,5 / 5,5',
-          desc:"Respiration de cohérence cardiaque : synchronise cœur et cerveau, maximise la variabilité cardiaque (HRV). Recommandée pour des séances de 5 minutes ou plus." },
-        box:{ name:'Box', sub:'4-4-4-4',
-          desc:"Box breathing (Navy SEALs) : réduit le stress, améliore la concentration avec un rythme carré parfait. 3 à 5 cycles suffisent pour un effet notable." },
-        tesla:{ name:'Tesla', sub:'3-6-9',
-          desc:"Rythme 3-6-9 inspiré de Tesla : ratio 1:2:3, énergisant et favorise la clarté mentale." },
-        sleep:{ name:'Sommeil', sub:'4-7-8',
-          desc:"Technique 4-7-8 (Dr Andrew Weil) : active le système parasympathique, idéale avant le coucher. Weil recommande de commencer à 4 cycles, jusqu'à 8 avec la pratique." },
-        stress:{ name:'Anti-stress', sub:'4-8',
-          desc:"Ratio 1:2 : expiration deux fois plus longue que l'inspiration pour activer le nerf vague et réduire le cortisol." },
-        energy:{ name:'Énergie', sub:'3-1',
-          desc:"Respiration dynamique 3:1 : inspiration ample, expiration courte et franche pour un boost d'énergie rapide. Environ 3 minutes de pratique." },
-        vortex:{ name:'Vortex', sub:'13-8-5-3-2-1',
-          desc:"Séquence de Fibonacci inversée : chaque respiration se raccourcit (13s à 1s), créant un effet de spirale qui recentre l'attention vers l'intérieur." },
-        sriyantra:{ name:'Sri Yantra', sub:'4→10 progressif',
-          desc:"Respiration progressive inspirée de la géométrie sacrée : chaque cycle s'allonge (4 à 10 secondes) pour approfondir graduellement la détente." },
-        sigh:{ name:'Soupir physiologique', sub:'2 inspirations + 1 longue expiration',
-          desc:"Popularisé par le Dr Andrew Huberman (Stanford) : une double inspiration suivie d'une longue expiration. Calme le stress en 1 à 3 respirations." },
-        wimhof:{ name:'Wim Hof', sub:'30 respirations + rétention',
-          desc:"Hyperventilation contrôlée (30 respirations rapides) suivie d'une rétention poumons vides, puis d'une respiration de récupération. Protocole standard : 3 cycles. À pratiquer assis ou couché, jamais dans l'eau, en conduisant ou debout. Déconseillé en cas de grossesse, d'épilepsie ou de troubles cardiovasculaires. Les durées de rétention affichées sont indicatives — arrêtez dès l'envie de respirer." }
-      }
+      aboutLicenseLine:'Distribué sous licence MIT'
     },
     'en-US': {
       appTitle:'Breathe',
@@ -639,33 +748,7 @@
       aboutRepoLabel:'View source on GitHub',
       aboutSuggestLabel:'Suggest a technique or feature',
       aboutChangelogLabel:'Release notes',
-      aboutLicenseLine:'Distributed under the MIT license',
-      categories:{
-        calm:'Calm', focus:'Focus', energy:'Energy',
-        sleep:'Sleep', meditation:'Advanced meditation', performance:'Performance & vitality'
-      },
-      techniques:{
-        coherence:{ name:'Coherence', sub:'5.5 / 5.5',
-          desc:"Heart-coherence breathing: synchronizes heart and brain, maximizes heart-rate variability (HRV). Recommended for sessions of 5 minutes or more." },
-        box:{ name:'Box', sub:'4-4-4-4',
-          desc:"Box breathing (Navy SEALs): reduces stress and sharpens focus with a perfectly even square rhythm. 3 to 5 cycles are enough for a noticeable effect." },
-        tesla:{ name:'Tesla', sub:'3-6-9',
-          desc:"Tesla-inspired 3-6-9 rhythm: a 1:2:3 ratio that's energizing and supports mental clarity." },
-        sleep:{ name:'Sleep', sub:'4-7-8',
-          desc:"The 4-7-8 technique (Dr. Andrew Weil): activates the parasympathetic nervous system, ideal before bedtime. Weil recommends starting at 4 cycles, building up to 8 with practice." },
-        stress:{ name:'Stress relief', sub:'4-8',
-          desc:"1:2 ratio: the exhale is twice as long as the inhale, activating the vagus nerve and lowering cortisol." },
-        energy:{ name:'Energy', sub:'3-1',
-          desc:"Dynamic 3:1 breathing: a full inhale and a short, sharp exhale for a quick energy boost. About 3 minutes of practice." },
-        vortex:{ name:'Vortex', sub:'13-8-5-3-2-1',
-          desc:"Reversed Fibonacci sequence: each breath gets shorter (13s down to 1s), creating a spiraling effect that draws attention inward." },
-        sriyantra:{ name:'Sri Yantra', sub:'4→10 progressive',
-          desc:"Progressive breathing inspired by sacred geometry: each cycle grows longer (4 to 10 seconds), gradually deepening relaxation." },
-        sigh:{ name:'Physiological sigh', sub:'2 inhales + 1 long exhale',
-          desc:"Popularized by Dr. Andrew Huberman (Stanford): a double inhale followed by a long exhale. Calms stress in 1 to 3 breaths." },
-        wimhof:{ name:'Wim Hof', sub:'30 breaths + retention',
-          desc:"Controlled hyperventilation (30 rapid breaths) followed by a breath-hold on empty lungs, then a recovery breath. Standard protocol: 3 rounds. Practice sitting or lying down — never in water, while driving, or standing. Not recommended during pregnancy, epilepsy, or cardiovascular conditions. Hold times shown are indicative only — stop as soon as you feel the urge to breathe." }
-      }
+      aboutLicenseLine:'Distributed under the MIT license'
     }
   };
 
@@ -702,17 +785,28 @@
     }
     return node !== undefined ? node : key;
   }
-  function techMeta(id){ return t('techniques.'+id); }
-  function catName(id){ return t('categories.'+id); }
+  function patternsDict(){
+    return (patternsData.i18n && patternsData.i18n[currentLang])
+      || (patternsData.i18n && patternsData.i18n[FALLBACK_LANG])
+      || EMBEDDED_FALLBACK_PATTERNS.i18n[FALLBACK_LANG];
+  }
+  function techMeta(id){
+    const d = patternsDict();
+    return (d.techniques && d.techniques[id]) || { name:id, sub:'', desc:'' };
+  }
+  function catName(id){
+    const d = patternsDict();
+    return (d.categories && d.categories[id]) || id;
+  }
 
   function techById(id){
-    return TECHNIQUES.find(x=>x.id===id);
+    return patternsData.techniques.find(x=>x.id===id);
   }
 
   // =========================================================
   // État de l'application
   // =========================================================
-  let currentTech = TECHNIQUES[0];
+  let currentTech = patternsData.techniques[0];
   let running = false;
   let phaseIndex = 0;
   let phaseTimer = null;
@@ -720,7 +814,7 @@
   let phaseStart = 0;
   let phaseDurMs = 0;
   let cycles = 0;
-  let targetCycles = TECHNIQUES[0].defaultCycles || 5;
+  let targetCycles = currentTech.defaultCycles || 5;
   let sessionStart = null;
   let elapsedTimer = null;
   let sessionTotalSeconds = 0;
@@ -891,7 +985,7 @@
 
   function renderMenu(){
     menuCategories.innerHTML = '';
-    const sortedCategories = [...CATEGORIES].sort((a,b)=>catName(a.id).localeCompare(catName(b.id), currentLang));
+    const sortedCategories = [...patternsData.categories].sort((a,b)=>catName(a.id).localeCompare(catName(b.id), currentLang));
     sortedCategories.forEach((cat)=>{
       const catEl = document.createElement('div');
       const containsCurrent = cat.techIds.includes(currentTech.id);
@@ -899,7 +993,13 @@
 
       const header = document.createElement('div');
       header.className = 'menu-cat-header';
-      header.innerHTML = '<span>'+catName(cat.id)+'</span><span class="chev">▾</span>';
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = catName(cat.id);
+      const chevSpan = document.createElement('span');
+      chevSpan.className = 'chev';
+      chevSpan.textContent = '▾';
+      header.appendChild(nameSpan);
+      header.appendChild(chevSpan);
       header.onclick = () => {
         const wasOpen = catEl.classList.contains('open');
         menuCategories.querySelectorAll('.menu-category').forEach(el=>el.classList.remove('open'));
@@ -915,7 +1015,16 @@
       sortedTechs.forEach(({id, meta})=>{
         const item = document.createElement('div');
         item.className = 'menu-tech-item' + (id===currentTech.id ? ' active' : '');
-        item.innerHTML = '<div><div class="name">'+meta.name+'</div><div class="sub">'+meta.sub+'</div></div>';
+        const wrap = document.createElement('div');
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'name';
+        nameDiv.textContent = meta.name;
+        const subDiv = document.createElement('div');
+        subDiv.className = 'sub';
+        subDiv.textContent = meta.sub;
+        wrap.appendChild(nameDiv);
+        wrap.appendChild(subDiv);
+        item.appendChild(wrap);
         item.onclick = () => selectTechnique(techById(id));
         list.appendChild(item);
       });
@@ -1181,6 +1290,33 @@
   updateCycleDisplay();
   updateDurationDisplay();
   applyLanguage();
+
+  // =========================================================
+  // Mise à jour des patterns à l'ouverture (si accès réseau) :
+  // silencieuse, ne bloque jamais le rendu initial (déjà fait
+  // ci-dessus depuis le cache ou le repli intégré).
+  // =========================================================
+  fetchRemotePatterns().then(remote => {
+    if(!remote) return; // hors ligne ou échec : on garde ce qui est déjà affiché
+    if(remote.dataVersion === patternsData.dataVersion) return; // déjà à jour
+
+    patternsData = remote;
+    saveCachedPatterns(remote);
+
+    // Si la technique affichée n'existe plus dans les nouvelles données, revenir à la première
+    const stillExists = patternsData.techniques.find(x => x.id === currentTech.id);
+    currentTech = stillExists || patternsData.techniques[0];
+    if(!running){
+      targetCycles = currentTech.defaultCycles || 5;
+    }
+
+    applyLanguage(); // relance tout le rendu (menu, carte technique, libellés)
+    if(!running){
+      resetVisual();
+      updateCycleDisplay();
+      updateDurationDisplay();
+    }
+  });
 
   // keep screen awake attempt (best-effort, ignored if unsupported)
   let wakeLock = null;

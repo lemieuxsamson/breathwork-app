@@ -5,6 +5,20 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.1.0] — 2026-07-15
+
+### Ajouté
+- Séparation des techniques/catégories dans un fichier externe `patterns.json`, chargé au démarrage
+- Mise en cache locale (`localStorage`) des patterns pour un fonctionnement **hors ligne complet** après le premier chargement
+- Vérification de mise à jour silencieuse à chaque ouverture de l'app (si réseau disponible) : si `patterns.json` a changé de version, le cache et l'affichage se mettent à jour automatiquement sans interrompre une séance en cours
+- Repli intégré (`EMBEDDED_FALLBACK_PATTERNS`) directement dans `index.html`, garantissant que l'app reste fonctionnelle même au tout premier lancement hors ligne (avant toute mise en cache)
+
+### Sécurité
+- **Validation stricte de toutes les lectures du `localStorage`** avant utilisation (`validatePatternsData`) : types, bornes numériques, longueurs de chaînes, formats d'identifiants (liste blanche `^[a-z][a-z0-9_-]{0,39}$`), intégrité référentielle (catégories → techniques existantes), détection de tentative de pollution de prototype (`__proto__`, `constructor`, `prototype`)
+- Toute entrée `localStorage` invalide ou corrompue est automatiquement purgée et remplacée par le repli sécuritaire, sans jamais faire planter l'app
+- Élimination complète des usages d'`innerHTML` avec du contenu dynamique (catégories/techniques) — remplacés par de la construction DOM sécurisée (`createElement`/`textContent`), qui neutralise tout contenu HTML/script injecté même s'il passait la validation
+- Suite de tests automatisés (jsdom) couvrant : JSON corrompu, tentative de pollution de prototype, identifiants malveillants, contenu texte contenant du HTML — tous confirmés neutralisés sans exécution ni plantage
+
 ## [1.0.0] — 2026-07-14
 
 Première version « officielle » du projet, après plusieurs itérations de développement conversationnel.
