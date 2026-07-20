@@ -5,6 +5,18 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.3.0] — 2026-07-15
+
+### Ajouté
+- **Service worker** (`sw.js`) : l'app shell (`index.html`, `manifest.json`, icônes) est maintenant mis en cache réellement hors ligne, ce qui comblait une lacune de l'architecture précédente — le cache `localStorage` protégeait déjà le *contenu* (`patterns.json`/`strings.json`) contre une perte de réseau, mais pas l'application elle-même. Un rechargement de la page sans réseau (et sans cache navigateur intact) pouvait auparavant échouer.
+  - Stratégie **cache d'abord** pour l'app shell, avec mise à jour silencieuse en arrière-plan
+  - Stratégie **réseau d'abord, repli sur le cache** pour `patterns.json`/`strings.json`, cohérente avec leur propre logique de fraîcheur déjà en place
+  - Purge automatique des anciennes versions de cache à l'activation d'une nouvelle version du service worker
+  - Clé de cache normalisée (sans le paramètre `?t=` de contournement du cache HTTP) pour éviter une croissance illimitée du cache de données
+
+### Tests
+- Suite de tests dédiée (mocks de l'API Cache Storage/Service Worker via `vm` Node, puisque jsdom ne supporte pas cette API) couvrant : mise en cache initiale complète, purge des anciennes versions, absence de fuite de cache malgré le cache-busting, repli sur le cache hors ligne, non-interception des requêtes tierces et non-GET
+
 ## [1.2.1] — 2026-07-15
 
 ### Modifié
