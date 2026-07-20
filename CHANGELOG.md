@@ -5,6 +5,17 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.4.2] — 2026-07-20
+
+### Ajouté — Automatisation du versioning
+- **`scripts/sync-version.js`** : propage automatiquement le numéro de version de `package.json` (source unique de vérité) vers `index.html` (`APP_VERSION`), `sw.js` (`CACHE_VERSION`) et le badge de `README.md`
+- Branché sur le hook natif `version` de npm : lancer **`npm version patch`** (ou `minor`/`major`) bump le numéro, synchronise les trois fichiers, les ajoute au même commit, puis crée automatiquement le commit et le tag git correspondants — une seule commande couvre tout le flux, plus besoin de modifier chaque fichier à la main
+- `scripts/check-versions.js` reste en place comme filet de sécurité en CI, au cas où un fichier serait modifié directement sans passer par `npm version`
+- Validé de bout en bout dans un dépôt git de test : `npm version patch` produit un commit unique avec les 4 fichiers modifiés (`index.html`, `sw.js`, `README.md`, `package.json`) et le tag correspondant
+
+### Corrigé
+- `.github/workflows/ci.yml` : passage à Node.js 24 (GitHub force déjà cette version sur ses runners depuis la dépréciation de Node 20 — ça élimine l'avertissement de dépréciation dans les logs, aucun changement de comportement)
+
 ## [1.4.1] — 2026-07-20
 
 Aucun changement fonctionnel — outillage de développement uniquement (n'affecte pas le site déployé).
