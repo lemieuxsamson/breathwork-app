@@ -259,6 +259,137 @@
     margin-top:14px;font-size:11px;color:var(--muted);
   }
 
+  /* Modale Séance de groupe (même famille visuelle que #aboutModal) */
+  #groupOverlay{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.55);
+    opacity:0;pointer-events:none;
+    transition:opacity .25s;
+    z-index:60;
+  }
+  #groupOverlay.open{opacity:1;pointer-events:auto;}
+  #groupModal{
+    position:fixed;left:50%;top:50%;
+    transform:translate(-50%,-46%) scale(0.96);
+    width:min(90vw, 380px);
+    max-height:85vh;overflow-y:auto;
+    background:var(--bg2);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    padding:26px 22px 22px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    opacity:0;pointer-events:none;
+    transition:opacity .25s, transform .25s;
+    z-index:70;
+  }
+  #groupModal.open{
+    opacity:1;pointer-events:auto;
+    transform:translate(-50%,-50%) scale(1);
+  }
+  #groupClose{
+    position:absolute;top:12px;right:12px;
+    width:28px;height:28px;border-radius:50%;
+    background:var(--card);border:1px solid var(--card-border);
+    color:var(--muted);font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    -webkit-appearance:none;appearance:none;
+  }
+  #groupTitle{font-size:18px;font-weight:700;color:var(--text);margin-bottom:16px;}
+
+  #groupTabs{
+    display:flex;gap:8px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:18px;
+  }
+  .group-tab{
+    -webkit-appearance:none;appearance:none;
+    flex:1;
+    background:none;border:none;
+    border-radius:999px;
+    padding:8px 10px;
+    font-family:inherit;font-size:13px;font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+  }
+  .group-tab.active{
+    background:linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#0b1220;
+  }
+
+  .group-panel{ text-align:left; }
+  #groupCreateSummary{
+    font-size:13px;color:var(--text);
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:12px;padding:12px 14px;margin-bottom:14px;
+    text-align:center;
+  }
+  #groupCreateSummary .sub{color:var(--muted);font-size:11.5px;margin-top:2px;}
+
+  .group-field-row{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .group-field-label{font-size:13px;color:var(--text);}
+
+  .group-primary-btn{
+    -webkit-appearance:none;appearance:none;
+    width:100%;
+    background:linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#0b1220;border:none;border-radius:999px;
+    padding:13px;font-family:inherit;font-size:14.5px;font-weight:700;
+    cursor:pointer;
+  }
+  .group-secondary-btn{
+    -webkit-appearance:none;appearance:none;
+    width:100%;
+    background:none;
+    color:var(--muted);border:1px solid var(--card-border);border-radius:999px;
+    padding:11px;font-family:inherit;font-size:13px;font-weight:600;
+    cursor:pointer;margin-top:10px;
+  }
+
+  #groupCreateResult{ margin-top:18px;text-align:center; }
+  #groupCode{
+    font-size:20px;font-weight:700;letter-spacing:0.04em;
+    color:var(--accent);
+    background:rgba(125,211,252,0.1);
+    border:1px solid rgba(125,211,252,0.3);
+    border-radius:12px;padding:12px;margin-bottom:14px;
+    word-break:break-all;
+  }
+  #groupQrWrap{
+    display:flex;justify-content:center;
+    background:#fff;border-radius:12px;padding:12px;margin-bottom:14px;
+  }
+  #groupQrWrap img{ display:block;width:100%;max-width:220px;height:auto; }
+  #groupCountdown{
+    font-size:13px;color:var(--muted);margin-bottom:4px;
+  }
+
+  #groupJoinLabel{
+    display:block;font-size:13px;color:var(--text);margin-bottom:8px;
+  }
+  #groupCodeInput{
+    -webkit-appearance:none;appearance:none;
+    width:100%;
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:12px;padding:13px 14px;margin-bottom:14px;
+    font-family:inherit;font-size:16px;font-weight:600;letter-spacing:0.04em;
+    color:var(--text);text-align:center;text-transform:uppercase;
+  }
+  #groupCodeInput:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  #groupJoinStatus{
+    margin-top:12px;font-size:12.5px;text-align:center;min-height:16px;
+  }
+  #groupJoinStatus.error{ color:#f87171; }
+  #groupJoinStatus.info{ color:var(--muted); }
+  #groupJoinStatus.success{ color:var(--accent); }
+
   .menu-category{
     margin-bottom:6px;
     border-bottom:1px solid var(--card-border);
@@ -483,6 +614,12 @@
     <div id="menuLangRow" role="group" aria-label="Langue"></div>
   </div>
   <div id="menuCategories"></div>
+  <div id="menuGroupSection">
+    <button id="menuGroupBtn" type="button" class="simple-row">
+      <span class="row-label" id="menuGroupLabel">Séance de groupe</span>
+      <span class="chev" aria-hidden="true">›</span>
+    </button>
+  </div>
   <div id="menuAboutSection">
     <a id="menuSuggestBtn" class="simple-row" target="_blank" rel="noopener noreferrer">
       <span class="row-label" id="menuSuggestLabel">Suggérer une technique</span>
@@ -506,6 +643,44 @@
   <a id="aboutSuggestLink" class="about-link" target="_blank" rel="noopener noreferrer"></a>
   <a id="aboutChangelogLink" class="about-link" target="_blank" rel="noopener noreferrer"></a>
   <div id="aboutLicenseLine"></div>
+</div>
+
+<div id="groupOverlay"></div>
+<div id="groupModal" role="dialog" aria-modal="true" aria-labelledby="groupTitle" inert>
+  <button id="groupClose" type="button" aria-label="Fermer"><span aria-hidden="true">×</span></button>
+  <div id="groupTitle">Séance de groupe</div>
+
+  <div id="groupTabs" role="tablist">
+    <button id="groupTabCreate" type="button" role="tab" aria-selected="true" class="group-tab active">Créer</button>
+    <button id="groupTabJoin" type="button" role="tab" aria-selected="false" class="group-tab">Rejoindre</button>
+  </div>
+
+  <div id="groupPanelCreate" class="group-panel" role="tabpanel">
+    <div id="groupCreateSummary"></div>
+    <div class="group-field-row">
+      <span class="group-field-label" id="groupDelayLabel">Délai de départ</span>
+      <div class="cycle-stepper" id="groupDelayStepper">
+        <button id="groupDelayMinus" type="button" class="stepper-btn">−</button>
+        <div class="val" id="groupDelayValue">15s</div>
+        <button id="groupDelayPlus" type="button" class="stepper-btn">+</button>
+      </div>
+    </div>
+    <button id="groupGenerateBtn" type="button" class="group-primary-btn">Générer le code</button>
+
+    <div id="groupCreateResult" hidden>
+      <div id="groupCode"></div>
+      <div id="groupQrWrap"><img id="groupQrImg" alt="QR code de la séance"></div>
+      <div id="groupCountdown"></div>
+      <button id="groupCancelBtn" type="button" class="group-secondary-btn">Annuler</button>
+    </div>
+  </div>
+
+  <div id="groupPanelJoin" class="group-panel" hidden role="tabpanel">
+    <label id="groupJoinLabel" for="groupCodeInput">Code de la séance</label>
+    <input id="groupCodeInput" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX">
+    <button id="groupJoinBtn" type="button" class="group-primary-btn">Rejoindre</button>
+    <div id="groupJoinStatus" aria-live="polite"></div>
+  </div>
 </div>
 
 <script>
@@ -734,6 +909,110 @@
   }
 
   // =========================================================
+  // Codec du code de séance de groupe synchronisée (sans serveur)
+  // =========================================================
+  // Le code encode tout ce qu'il faut pour qu'un appareil, à tout moment,
+  // calcule localement où il devrait être dans la séquence — sans connexion
+  // entre appareils, sans lecture réseau. Voir tests dédiés (session-codec).
+  //
+  // Champs empaquetés (57 bits — BigInt requis, dépasse 32 bits natifs et
+  // les 53 bits sûrs de Number) :
+  //   version(2) techIndex(5) cycles(7) delaySeconds(7) startOffset(30) checksum(6)
+  // Encodés en Base32 Crockford (sans I/L/O/U), 12 caractères, format XXXX-XXXX-XXXX.
+  const SESSION_EPOCH_MS = Date.UTC(2026, 0, 1, 0, 0, 0);
+  const CROCKFORD_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  const SESSION_CODE_LENGTH = 12;
+  const SESSION_CODE_VERSION = 0;
+
+  function sessionBitMask(bits){ return (1n << BigInt(bits)) - 1n; }
+
+  function sessionChecksum(payload51bits){
+    const a = payload51bits & sessionBitMask(6);
+    const b = (payload51bits >> 6n) & sessionBitMask(6);
+    const c = (payload51bits >> 17n) & sessionBitMask(6);
+    const d = (payload51bits >> 33n) & sessionBitMask(6);
+    return Number((a ^ b ^ c ^ d) & sessionBitMask(6));
+  }
+
+  function sessionToBase32(num, length){
+    let out = '';
+    let n = num;
+    for(let i=0;i<length;i++){
+      out = CROCKFORD_ALPHABET[Number(n & 31n)] + out;
+      n >>= 5n;
+    }
+    return out.match(/.{1,4}/g).join('-');
+  }
+
+  function sessionFromBase32(cleaned){
+    let n = 0n;
+    for(const ch of cleaned){
+      let normalized = ch;
+      if(ch === 'O') normalized = '0';
+      else if(ch === 'I' || ch === 'L') normalized = '1';
+      const value = CROCKFORD_ALPHABET.indexOf(normalized);
+      if(value === -1) throw new Error('caractère invalide: ' + ch);
+      n = (n << 5n) | BigInt(value);
+    }
+    return n;
+  }
+
+  function encodeSessionCode({ techIndex, cycles, delaySeconds, nowMs }){
+    if(!Number.isInteger(techIndex) || techIndex < 0 || techIndex > 31){
+      throw new RangeError('techIndex hors bornes (0-31)');
+    }
+    if(!Number.isInteger(cycles) || cycles < 1 || cycles > 127){
+      throw new RangeError('cycles hors bornes (1-127)');
+    }
+    if(!Number.isInteger(delaySeconds) || delaySeconds < 0 || delaySeconds > 127){
+      throw new RangeError('delaySeconds hors bornes (0-127)');
+    }
+    const startMs = nowMs + delaySeconds*1000;
+    const startOffset = Math.round((startMs - SESSION_EPOCH_MS) / 1000);
+    if(startOffset < 0 || startOffset > Number(sessionBitMask(30))){
+      throw new RangeError('startOffset hors bornes — hors de la portée du format (~34 ans)');
+    }
+    let payload = 0n;
+    payload |= BigInt(SESSION_CODE_VERSION) << 49n;
+    payload |= BigInt(techIndex) << 44n;
+    payload |= BigInt(cycles) << 37n;
+    payload |= BigInt(delaySeconds) << 30n;
+    payload |= BigInt(startOffset);
+    const checksum = sessionChecksum(payload);
+    const full = (payload << 6n) | BigInt(checksum);
+    return sessionToBase32(full, SESSION_CODE_LENGTH);
+  }
+
+  /**
+   * @returns {{ok:true, techIndex, cycles, delaySeconds, startTimeMs} | {ok:false, error:string}}
+   */
+  function decodeSessionCode(code, techCount){
+    if(typeof code !== 'string') return { ok:false, error:'empty' };
+    const cleaned = code.trim().toUpperCase().replace(/[\s-]/g, '');
+    if(cleaned.length !== SESSION_CODE_LENGTH) return { ok:false, error:'length' };
+    let full;
+    try{ full = sessionFromBase32(cleaned); }
+    catch(e){ return { ok:false, error:'charset' }; }
+
+    const checksum = Number(full & sessionBitMask(6));
+    const payload = full >> 6n;
+    if(sessionChecksum(payload) !== checksum) return { ok:false, error:'checksum' };
+
+    const startOffset = Number(payload & sessionBitMask(30));
+    const delaySeconds = Number((payload >> 30n) & sessionBitMask(7));
+    const cycles = Number((payload >> 37n) & sessionBitMask(7));
+    const techIndex = Number((payload >> 44n) & sessionBitMask(5));
+    const version = Number((payload >> 49n) & sessionBitMask(2));
+
+    if(version !== SESSION_CODE_VERSION) return { ok:false, error:'version' };
+    if(cycles < 1 || cycles > 127) return { ok:false, error:'cycles' };
+    if(!Number.isInteger(techCount) || techIndex >= techCount) return { ok:false, error:'technique' };
+
+    const startTimeMs = SESSION_EPOCH_MS + startOffset*1000;
+    return { ok:true, techIndex, cycles, delaySeconds, startTimeMs };
+  }
+
+  // =========================================================
   // Langues / textes d'interface ("chrome") : chargés depuis strings.json,
   // mis en cache et validés selon la même architecture que patterns.json.
   // Le contenu des techniques/catégories reste dans patternsData ;
@@ -746,11 +1025,16 @@
     'cyclesLabel','durationLabel','langSectionTitle',
     'cycleMinusAria','cyclePlusAria','suggestLabel','aboutLabel',
     'aboutCloseAria','aboutDesc','aboutRepoLabel','aboutSuggestLabel',
-    'aboutChangelogLabel','aboutLicenseLine'
+    'aboutChangelogLabel','aboutLicenseLine',
+    'groupLabel','groupTabCreate','groupTabJoin','groupDelayLabel',
+    'groupGenerateLabel','groupCancelLabel','groupCountdownPrefix',
+    'groupJoinFieldLabel','groupJoinBtnLabel','groupWaitingPrefix',
+    'groupErrorEmpty','groupErrorLength','groupErrorCharset','groupErrorChecksum',
+    'groupErrorVersion','groupErrorTechnique','groupErrorEnded','groupSyncing'
   ];
 
   const EMBEDDED_FALLBACK_STRINGS = {
-    dataVersion: 2,
+    dataVersion: 3,
     languages: [
       { code:'fr-CA', label:'Français' },
       { code:'en-US', label:'English' }
@@ -775,7 +1059,25 @@
         aboutRepoLabel:'Voir le code sur GitHub',
         aboutSuggestLabel:'Suggérer une technique ou une fonctionnalité',
         aboutChangelogLabel:'Notes de version',
-        aboutLicenseLine:'Distribué sous licence MIT'
+        aboutLicenseLine:'Distribué sous licence MIT',
+        groupLabel:'Séance de groupe',
+        groupTabCreate:'Créer',
+        groupTabJoin:'Rejoindre',
+        groupDelayLabel:'Délai de départ',
+        groupGenerateLabel:'Générer le code',
+        groupCancelLabel:'Annuler',
+        groupCountdownPrefix:'Débute dans',
+        groupJoinFieldLabel:'Code de la séance',
+        groupJoinBtnLabel:'Rejoindre',
+        groupWaitingPrefix:'La séance débute dans',
+        groupErrorEmpty:'Entre un code de séance.',
+        groupErrorLength:'Le code doit contenir 12 caractères.',
+        groupErrorCharset:'Ce code contient un caractère invalide.',
+        groupErrorChecksum:'Code invalide — vérifie chaque caractère.',
+        groupErrorVersion:'Ce code utilise un format plus récent — mets l\'app à jour.',
+        groupErrorTechnique:'Cette séance utilise une technique inconnue de cet appareil.',
+        groupErrorEnded:'Cette séance est déjà terminée.',
+        groupSyncing:'Synchronisation en cours…'
       },
       'en-US': {
         appTitle:'Breathe',
@@ -796,7 +1098,25 @@
         aboutRepoLabel:'View source on GitHub',
         aboutSuggestLabel:'Suggest a technique or feature',
         aboutChangelogLabel:'Release notes',
-        aboutLicenseLine:'Distributed under the MIT license'
+        aboutLicenseLine:'Distributed under the MIT license',
+        groupLabel:'Group session',
+        groupTabCreate:'Create',
+        groupTabJoin:'Join',
+        groupDelayLabel:'Start delay',
+        groupGenerateLabel:'Generate code',
+        groupCancelLabel:'Cancel',
+        groupCountdownPrefix:'Starts in',
+        groupJoinFieldLabel:'Session code',
+        groupJoinBtnLabel:'Join',
+        groupWaitingPrefix:'Session starts in',
+        groupErrorEmpty:'Enter a session code.',
+        groupErrorLength:'The code must be 12 characters long.',
+        groupErrorCharset:'This code contains an invalid character.',
+        groupErrorChecksum:'Invalid code — double-check each character.',
+        groupErrorVersion:'This code uses a newer format — please update the app.',
+        groupErrorTechnique:'This session uses a technique unknown to this device.',
+        groupErrorEnded:'This session has already ended.',
+        groupSyncing:'Syncing…'
       }
     }
   };
@@ -888,13 +1208,20 @@
         cyclesLabel:'cycles', durationLabel:'duration', langSectionTitle:'Language',
         cycleMinusAria:'Fewer', cyclePlusAria:'More', suggestLabel:'Suggest',
         aboutLabel:'About', aboutCloseAria:'Close', aboutDesc:'', aboutRepoLabel:'GitHub',
-        aboutSuggestLabel:'Suggest', aboutChangelogLabel:'Changelog', aboutLicenseLine:'MIT'
+        aboutSuggestLabel:'Suggest', aboutChangelogLabel:'Changelog', aboutLicenseLine:'MIT',
+        groupLabel:'Group session', groupTabCreate:'Create', groupTabJoin:'Join',
+        groupDelayLabel:'Delay', groupGenerateLabel:'Generate', groupCancelLabel:'Cancel',
+        groupCountdownPrefix:'Starts in', groupJoinFieldLabel:'Code', groupJoinBtnLabel:'Join',
+        groupWaitingPrefix:'Starts in', groupErrorEmpty:'Enter a code.', groupErrorLength:'Invalid length.',
+        groupErrorCharset:'Invalid character.', groupErrorChecksum:'Invalid code.',
+        groupErrorVersion:'Update required.', groupErrorTechnique:'Unknown technique.',
+        groupErrorEnded:'Session ended.', groupSyncing:'Syncing…'
       }}
     };
   }
 
   const FALLBACK_LANG = 'en-US';
-  const APP_VERSION = '1.4.2';
+  const APP_VERSION = '1.5.0';
   const REPO_URL = 'https://github.com/lemieuxsamson/breathwork-app';
   const ISSUES_NEW_URL = REPO_URL + '/issues/new';
   const CHANGELOG_URL = REPO_URL + '/blob/main/CHANGELOG.md';
@@ -985,6 +1312,31 @@
   const aboutChangelogLink = document.getElementById('aboutChangelogLink');
   const aboutLicenseLine = document.getElementById('aboutLicenseLine');
   const aboutVersion = document.getElementById('aboutVersion');
+  const menuGroupBtn = document.getElementById('menuGroupBtn');
+  const menuGroupLabel = document.getElementById('menuGroupLabel');
+  const groupOverlay = document.getElementById('groupOverlay');
+  const groupModal = document.getElementById('groupModal');
+  const groupClose = document.getElementById('groupClose');
+  const groupTitle = document.getElementById('groupTitle');
+  const groupTabCreate = document.getElementById('groupTabCreate');
+  const groupTabJoin = document.getElementById('groupTabJoin');
+  const groupPanelCreate = document.getElementById('groupPanelCreate');
+  const groupPanelJoin = document.getElementById('groupPanelJoin');
+  const groupCreateSummary = document.getElementById('groupCreateSummary');
+  const groupDelayLabel = document.getElementById('groupDelayLabel');
+  const groupDelayMinus = document.getElementById('groupDelayMinus');
+  const groupDelayPlus = document.getElementById('groupDelayPlus');
+  const groupDelayValue = document.getElementById('groupDelayValue');
+  const groupGenerateBtn = document.getElementById('groupGenerateBtn');
+  const groupCreateResult = document.getElementById('groupCreateResult');
+  const groupCode = document.getElementById('groupCode');
+  const groupQrImg = document.getElementById('groupQrImg');
+  const groupCountdown = document.getElementById('groupCountdown');
+  const groupCancelBtn = document.getElementById('groupCancelBtn');
+  const groupJoinLabel = document.getElementById('groupJoinLabel');
+  const groupCodeInput = document.getElementById('groupCodeInput');
+  const groupJoinBtn = document.getElementById('groupJoinBtn');
+  const groupJoinStatus = document.getElementById('groupJoinStatus');
   const appTitleEl = document.getElementById('appTitle');
   const appSubtitleEl = document.getElementById('appSubtitle');
   const currentTechName = document.getElementById('currentTechName');
@@ -1330,20 +1682,30 @@
     return ringLevel;
   }
 
-  function runPhase(){
+  function runPhase(resume){
     if(!running) return;
     const phases = currentTech.phases;
     const p = phases[phaseIndex];
     phaseLabel.textContent = t('phase.'+p.type);
-    phaseDurMs = p.dur * 1000;
+
+    const elapsedIntoPhase = resume ? resume.elapsedIntoPhaseSec : 0;
+    const remainingSec = resume ? Math.max(0.05, p.dur - elapsedIntoPhase) : p.dur;
+    phaseDurMs = remainingSec * 1000;
     phaseStart = performance.now();
 
-    phaseStartLevel = ringLevel;
+    phaseStartLevel = resume ? resume.startLevelOverride : ringLevel;
     phaseEndLevel = levelForPhase(p);
 
     const targetScale = scaleForPhase(p, phaseEndLevel);
     if(targetScale !== null){
-      circle.style.transitionDuration = p.dur + 's';
+      if(resume){
+        // Placer le cercle instantanément à la bonne position avant de reprendre
+        // l'animation — sinon on verrait l'animation complète rejouer depuis le début.
+        circle.style.transitionDuration = '0s';
+        circle.style.transform = 'scale('+(0.55 + resume.startLevelOverride*0.45)+')';
+        void circle.offsetWidth;
+      }
+      circle.style.transitionDuration = remainingSec + 's';
       circle.style.transitionTimingFunction = 'ease-in-out';
       void circle.offsetWidth;
       circle.style.transform = 'scale('+targetScale+')';
@@ -1351,7 +1713,7 @@
       circle.style.transitionDuration = '0.15s';
     }
 
-    playBreathSound(phaseDir(p), p.dur);
+    playBreathSound(phaseDir(p), remainingSec);
 
     clearInterval(tickTimer);
     tickTimer = setInterval(()=>{
@@ -1378,8 +1740,8 @@
           return;
         }
       }
-      runPhase();
-    }, p.dur*1000);
+      runPhase(); // phase suivante : jamais de reprise, elle joue toujours en entier
+    }, remainingSec*1000);
   }
 
   function start(){
@@ -1414,6 +1776,91 @@
     updateCycleDisplay();
     updateDurationDisplay();
     resetVisual();
+  }
+
+  // =========================================================
+  // Séance de groupe synchronisée (sans serveur)
+  // =========================================================
+  // Étant donné un temps écoulé depuis le début théorique d'une séance,
+  // détermine où on devrait être : quel cycle, quelle phase, et combien de
+  // temps est déjà passé dans cette phase. Logique pure, testée isolément.
+  function locateInSequence(phases, elapsedSeconds){
+    const cycleDur = phases.reduce((s,p)=>s+p.dur, 0);
+    const cycleNum = Math.floor(elapsedSeconds / cycleDur);
+    let remainder = elapsedSeconds - cycleNum*cycleDur;
+    for(let i=0;i<phases.length;i++){
+      if(remainder < phases[i].dur){
+        return { cycleNum, phaseIndex:i, elapsedIntoPhaseSec: remainder };
+      }
+      remainder -= phases[i].dur;
+    }
+    const lastIdx = phases.length-1;
+    return { cycleNum, phaseIndex:lastIdx, elapsedIntoPhaseSec: phases[lastIdx].dur };
+  }
+
+  // Simule le niveau de l'anneau juste AVANT le début de la phase donnée, en
+  // rejouant les phases précédentes (nécessaire car "hold" conserve le
+  // niveau de la phase d'avant plutôt que d'avoir le sien propre).
+  function levelBeforePhase(phases, phaseIndex){
+    let level = 0;
+    for(let i=0;i<phaseIndex;i++){
+      const p = phases[i];
+      if(p.target !== undefined) level = p.target;
+      else if(p.type === 'in') level = 1;
+      else if(p.type === 'out') level = 0;
+    }
+    return level;
+  }
+
+  function endLevelForPhase(phase, levelBefore){
+    if(phase.target !== undefined) return phase.target;
+    if(phase.type === 'in') return 1;
+    if(phase.type === 'out') return 0;
+    return levelBefore;
+  }
+
+  /**
+   * Démarre (ou rejoint en cours de route) une séance synchronisée sur une
+   * heure de départ absolue partagée. Retourne un statut pour que l'UI sache
+   * si la séance est déjà terminée, en attente de démarrer, ou en cours.
+   */
+  function startSyncedSession(startTimeMs, tech, cyclesTarget){
+    const totalDur = techCycleDuration(tech) * cyclesTarget;
+    const elapsedSeconds = (Date.now() - startTimeMs) / 1000;
+
+    if(elapsedSeconds < 0){
+      return { status:'waiting', startsInSeconds: -elapsedSeconds };
+    }
+    if(elapsedSeconds >= totalDur){
+      return { status:'ended' };
+    }
+
+    currentTech = tech;
+    targetCycles = cyclesTarget;
+
+    const { cycleNum, phaseIndex: pIdx, elapsedIntoPhaseSec } = locateInSequence(tech.phases, elapsedSeconds);
+    const levelBefore = levelBeforePhase(tech.phases, pIdx);
+    const phaseObj = tech.phases[pIdx];
+    const levelEnd = endLevelForPhase(phaseObj, levelBefore);
+    const frac = elapsedIntoPhaseSec / phaseObj.dur;
+    const startLevelOverride = levelBefore + (levelEnd - levelBefore) * frac;
+
+    cycles = cycleNum;
+    phaseIndex = pIdx;
+    ringLevel = startLevelOverride;
+    running = true;
+    startBtn.textContent = t('stop');
+    startBtn.classList.add('running');
+    cycleStepper.classList.add('locked');
+    sessionTotalSeconds = totalDur;
+    sessionStart = Date.now() - elapsedSeconds*1000;
+    clearInterval(elapsedTimer);
+    elapsedTimer = setInterval(updateDurationDisplay, 1000);
+    updateCycleDisplay();
+    updateDurationDisplay();
+
+    runPhase({ elapsedIntoPhaseSec, startLevelOverride });
+    return { status:'started' };
   }
 
   startBtn.addEventListener('click', ()=>{
@@ -1453,6 +1900,17 @@
     aboutSuggestLink.textContent = t('aboutSuggestLabel');
     aboutChangelogLink.textContent = t('aboutChangelogLabel');
     aboutLicenseLine.textContent = t('aboutLicenseLine');
+    menuGroupLabel.textContent = t('groupLabel');
+    groupTitle.textContent = t('groupLabel');
+    groupTabCreate.textContent = t('groupTabCreate');
+    groupTabJoin.textContent = t('groupTabJoin');
+    groupClose.setAttribute('aria-label', t('aboutCloseAria'));
+    groupDelayLabel.textContent = t('groupDelayLabel');
+    groupGenerateBtn.textContent = t('groupGenerateLabel');
+    groupCancelBtn.textContent = t('groupCancelLabel');
+    groupJoinLabel.textContent = t('groupJoinFieldLabel');
+    groupJoinBtn.textContent = t('groupJoinBtnLabel');
+    updateGroupCreateSummary();
     renderLangRow();
     renderMenu();
     updateTechCard(currentTech);
@@ -1499,6 +1957,201 @@
   menuAboutBtn.addEventListener('click', openAbout);
   aboutClose.addEventListener('click', closeAbout);
   aboutOverlay.addEventListener('click', closeAbout);
+
+  // =========================================================
+  // UI — Séance de groupe
+  // =========================================================
+  let groupDelaySeconds = 15;
+  let groupCountdownTimer = null;
+  let groupJoinWaitTimer = null;
+  let qrLibLoaded = false;
+
+  function loadQrLib(callback){
+    if(qrLibLoaded){ callback(); return; }
+    const script = document.createElement('script');
+    script.src = 'vendor/qrcode.min.js';
+    script.onload = () => { qrLibLoaded = true; callback(); };
+    script.onerror = () => { callback(new Error('load-failed')); };
+    document.head.appendChild(script);
+  }
+
+  function techIndexOf(tech){
+    return patternsData.techniques.findIndex(t => t.id === tech.id);
+  }
+
+  function updateGroupCreateSummary(){
+    const meta = techMeta(currentTech.id);
+    groupCreateSummary.innerHTML = '';
+    const nameDiv = document.createElement('div');
+    nameDiv.textContent = meta.name;
+    const subDiv = document.createElement('div');
+    subDiv.className = 'sub';
+    subDiv.textContent = targetCycles + ' ' + t('cyclesLabel');
+    groupCreateSummary.appendChild(nameDiv);
+    groupCreateSummary.appendChild(subDiv);
+  }
+
+  function updateGroupDelayDisplay(){
+    groupDelayValue.textContent = groupDelaySeconds + 's';
+  }
+  groupDelayMinus.addEventListener('click', () => {
+    groupDelaySeconds = Math.max(5, groupDelaySeconds - 5);
+    updateGroupDelayDisplay();
+  });
+  groupDelayPlus.addEventListener('click', () => {
+    groupDelaySeconds = Math.min(60, groupDelaySeconds + 5);
+    updateGroupDelayDisplay();
+  });
+
+  function switchGroupTab(tab){
+    const creating = tab === 'create';
+    groupTabCreate.classList.toggle('active', creating);
+    groupTabJoin.classList.toggle('active', !creating);
+    groupTabCreate.setAttribute('aria-selected', creating ? 'true' : 'false');
+    groupTabJoin.setAttribute('aria-selected', !creating ? 'true' : 'false');
+    groupPanelCreate.hidden = !creating;
+    groupPanelJoin.hidden = creating;
+  }
+  groupTabCreate.addEventListener('click', () => switchGroupTab('create'));
+  groupTabJoin.addEventListener('click', () => switchGroupTab('join'));
+
+  function resetGroupCreatePanel(){
+    clearInterval(groupCountdownTimer);
+    groupCreateResult.hidden = true;
+    groupGenerateBtn.hidden = false;
+    updateGroupDelayDisplay();
+    updateGroupCreateSummary();
+  }
+
+  groupGenerateBtn.addEventListener('click', () => {
+    const nowMs = Date.now();
+    let code;
+    try{
+      code = encodeSessionCode({
+        techIndex: techIndexOf(currentTech),
+        cycles: targetCycles,
+        delaySeconds: groupDelaySeconds,
+        nowMs
+      });
+    }catch(e){
+      return; // bornes déjà garanties par l'UI (steppers) — filet de sécurité silencieux
+    }
+    const startTimeMs = nowMs + groupDelaySeconds*1000;
+
+    groupGenerateBtn.hidden = true;
+    groupCreateResult.hidden = false;
+    groupCode.textContent = code;
+    groupQrImg.removeAttribute('src');
+
+    loadQrLib((err) => {
+      if(err || typeof window.qrcode !== 'function') return; // repli silencieux : le code texte reste utilisable
+      try{
+        const qr = window.qrcode(0, 'M');
+        qr.addData(code);
+        qr.make();
+        groupQrImg.src = qr.createDataURL(6, 4);
+      }catch(e){ /* repli silencieux sur le code texte */ }
+    });
+
+    function tickCountdown(){
+      const remain = Math.max(0, Math.ceil((startTimeMs - Date.now())/1000));
+      groupCountdown.textContent = t('groupCountdownPrefix') + ' ' + remain + 's';
+      if(remain <= 0){
+        clearInterval(groupCountdownTimer);
+        closeGroup();
+        startSyncedSession(startTimeMs, currentTech, targetCycles);
+      }
+    }
+    tickCountdown();
+    clearInterval(groupCountdownTimer);
+    groupCountdownTimer = setInterval(tickCountdown, 250);
+  });
+
+  groupCancelBtn.addEventListener('click', resetGroupCreatePanel);
+
+  function showGroupJoinStatus(text, kind){
+    groupJoinStatus.textContent = text;
+    groupJoinStatus.className = kind || '';
+  }
+
+  function groupErrorMessage(errorCode){
+    const map = {
+      empty:'groupErrorEmpty', length:'groupErrorLength', charset:'groupErrorCharset',
+      checksum:'groupErrorChecksum', version:'groupErrorVersion', technique:'groupErrorTechnique'
+    };
+    return t(map[errorCode] || 'groupErrorChecksum');
+  }
+
+  function attemptJoin(){
+    clearInterval(groupJoinWaitTimer);
+    const raw = groupCodeInput.value;
+    if(!raw || !raw.trim()){
+      showGroupJoinStatus(t('groupErrorEmpty'), 'error');
+      return;
+    }
+    const decoded = decodeSessionCode(raw, patternsData.techniques.length);
+    if(!decoded.ok){
+      showGroupJoinStatus(groupErrorMessage(decoded.error), 'error');
+      return;
+    }
+    const tech = patternsData.techniques[decoded.techIndex];
+
+    function tryStart(){
+      const elapsedSeconds = (Date.now() - decoded.startTimeMs) / 1000;
+      const totalDur = techCycleDuration(tech) * decoded.cycles;
+      if(elapsedSeconds >= totalDur){
+        clearInterval(groupJoinWaitTimer);
+        showGroupJoinStatus(t('groupErrorEnded'), 'error');
+        return;
+      }
+      if(elapsedSeconds < 0){
+        showGroupJoinStatus(t('groupWaitingPrefix') + ' ' + Math.ceil(-elapsedSeconds) + 's', 'info');
+        return;
+      }
+      clearInterval(groupJoinWaitTimer);
+      showGroupJoinStatus(t('groupSyncing'), 'success');
+      closeGroup();
+      startSyncedSession(decoded.startTimeMs, tech, decoded.cycles);
+    }
+
+    tryStart();
+    clearInterval(groupJoinWaitTimer);
+    groupJoinWaitTimer = setInterval(tryStart, 250);
+  }
+  groupJoinBtn.addEventListener('click', attemptJoin);
+  groupCodeInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') attemptJoin();
+  });
+
+  let groupLastFocused = null;
+  function onGroupKeydown(e){ handleDialogKeydown(e, groupModal, closeGroup); }
+
+  function openGroup(){
+    closeMenu();
+    groupLastFocused = document.activeElement;
+    groupModal.inert = false;
+    groupOverlay.classList.add('open');
+    groupModal.classList.add('open');
+    switchGroupTab('create');
+    resetGroupCreatePanel();
+    groupCodeInput.value = '';
+    showGroupJoinStatus('', '');
+    const focusables = getFocusable(groupModal);
+    if(focusables[0]) focusables[0].focus();
+    document.addEventListener('keydown', onGroupKeydown);
+  }
+  function closeGroup(){
+    groupOverlay.classList.remove('open');
+    groupModal.classList.remove('open');
+    groupModal.inert = true;
+    clearInterval(groupCountdownTimer);
+    clearInterval(groupJoinWaitTimer);
+    document.removeEventListener('keydown', onGroupKeydown);
+    if(groupLastFocused){ groupLastFocused.focus(); groupLastFocused = null; }
+  }
+  menuGroupBtn.addEventListener('click', openGroup);
+  groupClose.addEventListener('click', closeGroup);
+  groupOverlay.addEventListener('click', closeGroup);
 
   renderMenu();
   updateTechCard(currentTech);
