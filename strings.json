@@ -1,5 +1,5 @@
 {
-  "dataVersion": 2,
+  "dataVersion": 3,
   "languages": [
     {
       "code": "fr-CA",
@@ -37,7 +37,25 @@
       "aboutRepoLabel": "Voir le code sur GitHub",
       "aboutSuggestLabel": "Suggérer une technique ou une fonctionnalité",
       "aboutChangelogLabel": "Notes de version",
-      "aboutLicenseLine": "Distribué sous licence MIT"
+      "aboutLicenseLine": "Distribué sous licence MIT",
+      "groupLabel": "Séance de groupe",
+      "groupTabCreate": "Créer",
+      "groupTabJoin": "Rejoindre",
+      "groupDelayLabel": "Délai de départ",
+      "groupGenerateLabel": "Générer le code",
+      "groupCancelLabel": "Annuler",
+      "groupCountdownPrefix": "Débute dans",
+      "groupJoinFieldLabel": "Code de la séance",
+      "groupJoinBtnLabel": "Rejoindre",
+      "groupWaitingPrefix": "La séance débute dans",
+      "groupErrorEmpty": "Entre un code de séance.",
+      "groupErrorLength": "Le code doit contenir 12 caractères.",
+      "groupErrorCharset": "Ce code contient un caractère invalide.",
+      "groupErrorChecksum": "Code invalide — vérifie chaque caractère.",
+      "groupErrorVersion": "Ce code utilise un format plus récent — mets l'app à jour.",
+      "groupErrorTechnique": "Cette séance utilise une technique inconnue de cet appareil.",
+      "groupErrorEnded": "Cette séance est déjà terminée.",
+      "groupSyncing": "Synchronisation en cours…"
     },
     "en-US": {
       "appTitle": "Breathe",
@@ -65,7 +83,25 @@
       "aboutRepoLabel": "View source on GitHub",
       "aboutSuggestLabel": "Suggest a technique or feature",
       "aboutChangelogLabel": "Release notes",
-      "aboutLicenseLine": "Distributed under the MIT license"
+      "aboutLicenseLine": "Distributed under the MIT license",
+      "groupLabel": "Group session",
+      "groupTabCreate": "Create",
+      "groupTabJoin": "Join",
+      "groupDelayLabel": "Start delay",
+      "groupGenerateLabel": "Generate code",
+      "groupCancelLabel": "Cancel",
+      "groupCountdownPrefix": "Starts in",
+      "groupJoinFieldLabel": "Session code",
+      "groupJoinBtnLabel": "Join",
+      "groupWaitingPrefix": "Session starts in",
+      "groupErrorEmpty": "Enter a session code.",
+      "groupErrorLength": "The code must be 12 characters long.",
+      "groupErrorCharset": "This code contains an invalid character.",
+      "groupErrorChecksum": "Invalid code — double-check each character.",
+      "groupErrorVersion": "This code uses a newer format — please update the app.",
+      "groupErrorTechnique": "This session uses a technique unknown to this device.",
+      "groupErrorEnded": "This session has already ended.",
+      "groupSyncing": "Syncing…"
     }
   }
 }

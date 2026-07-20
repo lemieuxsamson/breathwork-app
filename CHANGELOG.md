@@ -5,6 +5,26 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.5.0] — 2026-07-20
+
+### Ajouté — Séance de groupe synchronisée (sans serveur)
+- Nouveau bouton de menu **« Séance de groupe »**, avec deux modes :
+  - **Créer** (coach) : génère un code court (12 caractères, format `XXXX-XXXX-XXXX`) encodant la technique, le nombre de cycles, un délai de départ ajustable (5-60s) et l'heure exacte de démarrage. Affiché en texte et en QR code.
+  - **Rejoindre** (participant) : saisie du code → l'appareil calcule localement où il devrait être dans la séquence à l'instant présent, et démarre directement à la bonne phase/cycle — même en rejoignant en retard
+- **Aucune connexion entre appareils, aucun serveur** : chaque appareil calcule sa position dans la séquence uniquement à partir de l'heure de départ encodée dans le code et de sa propre horloge
+- Le moteur de respiration (`runPhase`) peut désormais démarrer en plein milieu d'une séquence — avec la durée restante exacte et le niveau de remplissage du cercle correctement interpolé, plutôt que de rejouer la phase depuis le début
+- Génération de QR code via une librairie vendorisée localement (`vendor/qrcode.min.js`, MIT, chargée uniquement à l'usage — pas au démarrage normal de l'app)
+- `vendor/jsQR.min.js` (Apache-2.0) déjà vendorisé en prévision d'une prochaine itération : lecture de code par caméra (non encore intégrée à l'UI)
+
+### Sécurité
+- Le code de séance inclut une somme de contrôle qui détecte les fautes de frappe/codes corrompus, et une validation stricte de chaque champ décodé (bornes numériques, existence réelle de la technique référencée) — aucune confiance aveugle envers un code fourni par un tiers
+- Gestion propre des cas limites : séance déjà terminée, code corrompu, jonction avant l'heure de départ (décompte d'attente) — aucun de ces cas ne fait planter l'app
+
+### Tests
+- Codec testé isolément : 15 tests (round-trip exhaustif sur 500 combinaisons aléatoires, tolérance Crockford, rejet des codes invalides)
+- Logique de localisation dans la séquence testée isolément : 14 tests, validés sur les vrais patterns de l'app avec calculs vérifiés à la main
+- 8 tests d'intégration bout-en-bout committés (`tests/group-session.test.js`) couvrant le flux complet via l'UI simulée — y compris la vérification exacte de la phase/cycle après une jonction tardive
+
 ## [1.4.2] — 2026-07-20
 
 ### Ajouté — Automatisation du versioning

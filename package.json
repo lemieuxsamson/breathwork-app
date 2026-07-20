@@ -1,6 +1,6 @@
 {
   "name": "breathwork-app",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "private": true,
   "description": "Application web de respiration guidée (cohérence cardiaque & breathwork), PWA hors ligne, sans dépendance externe.",
   "scripts": {
