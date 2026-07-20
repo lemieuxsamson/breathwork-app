@@ -1,0 +1,18 @@
+{
+  "name": "breathwork-app",
+  "version": "1.4.1",
+  "private": true,
+  "description": "Application web de respiration guidée (cohérence cardiaque & breathwork), PWA hors ligne, sans dépendance externe.",
+  "scripts": {
+    "test": "node --test",
+    "check-versions": "node scripts/check-versions.js",
+    "verify": "npm run check-versions && npm test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "jsdom": "^29.0.0"
+  },
+  "license": "MIT"
+}

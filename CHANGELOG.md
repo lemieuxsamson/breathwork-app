@@ -5,6 +5,18 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.4.1] — 2026-07-20
+
+Aucun changement fonctionnel — outillage de développement uniquement (n'affecte pas le site déployé).
+
+### Ajouté — Tests & CI
+- Suite de tests committée dans `/tests`, utilisant le test-runner intégré de Node.js (`node --test`, aucune dépendance de framework) : sécurité/validation des données (9 tests), service worker (7 tests, via mocks de l'API Cache), accessibilité (7 tests, via jsdom) — **24 tests au total**
+- `package.json` avec `npm test` / `npm run check-versions` / `npm run verify`
+- **`scripts/check-versions.js`** : détecte automatiquement toute désynchronisation entre `APP_VERSION` (index.html), `CACHE_VERSION` (sw.js) et le badge de version du README — exactement le type de dérive manuelle qu'on a ratée entre la v1.3.0 et la v1.4.0
+- **`.github/workflows/ci.yml`** : lance la vérification des versions et la suite de tests automatiquement à chaque push/PR sur `main`
+
+Jusqu'ici, les tests n'existaient que dans l'environnement de travail ponctuel utilisé pour construire chaque version — ils ne protégeaient pas le dépôt contre une régression future. Ils font maintenant partie du projet lui-même.
+
 ## [1.4.0] — 2026-07-20
 
 ### Ajouté — Accessibilité
