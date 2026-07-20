@@ -1,5 +1,5 @@
 {
-  "dataVersion": 1,
+  "dataVersion": 2,
   "techniques": [
     {
       "id": "coherence",
@@ -571,6 +571,11 @@
           "type": "hold",
           "dur": 15,
           "dir": 0
+        },
+        {
+          "type": "out",
+          "dur": 2,
+          "dir": -1
         }
       ]
     }

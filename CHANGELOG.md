@@ -5,6 +5,20 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.2.0] — 2026-07-15
+
+### Corrigé
+- **Wim Hof** : la rétention de récupération (poumons pleins, 15s) était directement suivie du prochain round de 30 respirations rapides, sans expiration entre les deux. Une phase d'expiration (2s) a été ajoutée pour refléter la pratique réelle. (`patterns.json` passe à `dataVersion: 2`)
+
+### Ajouté
+- Séparation des textes d'interface (titres, boutons, libellés de phase, contenu de la modale À propos, etc.) dans un nouveau fichier **`strings.json`**, selon exactement la même architecture que `patterns.json` : cache `localStorage` validé, mise à jour silencieuse à l'ouverture si réseau disponible, repli intégré dans `index.html`
+- La liste des langues disponibles (pastilles du sélecteur) est désormais pilotée par `strings.json` plutôt que codée en dur — ajouter une langue ne nécessite plus de modifier `index.html`
+- Les deux mises à jour réseau (`patterns.json` et `strings.json`) sont indépendantes l'une de l'autre et s'appliquent chacune dès réception, sans bloquer le rendu initial
+
+### Sécurité
+- `strings.json` bénéficie de la même validation stricte que `patterns.json` avant toute utilisation (types, longueurs, formats de code de langue, détection de pollution de prototype) ; toute entrée invalide est purgée automatiquement
+- Suite de tests automatisés étendue pour couvrir `strings.json` corrompu ou malveillant, avec les mêmes garanties que pour `patterns.json`
+
 ## [1.1.0] — 2026-07-15
 
 ### Ajouté

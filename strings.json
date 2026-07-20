@@ -1,0 +1,67 @@
+{
+  "dataVersion": 1,
+  "languages": [
+    {
+      "code": "fr-CA",
+      "label": "Français"
+    },
+    {
+      "code": "en-US",
+      "label": "English"
+    }
+  ],
+  "strings": {
+    "fr-CA": {
+      "appTitle": "Respiration",
+      "appSubtitle": "Techniques de cohérence cardiaque & breathwork",
+      "menuAria": "Ouvrir le menu",
+      "ready": "Prêt",
+      "phase": {
+        "in": "Inspirer",
+        "hold": "Retenir",
+        "out": "Expirer"
+      },
+      "start": "Débuter",
+      "stop": "Arrêter",
+      "cyclesLabel": "cycles",
+      "durationLabel": "durée",
+      "langSectionTitle": "Langue",
+      "cycleMinusAria": "Moins de cycles",
+      "cyclePlusAria": "Plus de cycles",
+      "suggestLabel": "Suggérer une technique",
+      "aboutLabel": "À propos",
+      "aboutCloseAria": "Fermer",
+      "aboutDesc": "Application de respiration guidée — cohérence cardiaque et breathwork, sans backend, 100 % locale.",
+      "aboutRepoLabel": "Voir le code sur GitHub",
+      "aboutSuggestLabel": "Suggérer une technique ou une fonctionnalité",
+      "aboutChangelogLabel": "Notes de version",
+      "aboutLicenseLine": "Distribué sous licence MIT"
+    },
+    "en-US": {
+      "appTitle": "Breathe",
+      "appSubtitle": "Heart-coherence & breathwork techniques",
+      "menuAria": "Open menu",
+      "ready": "Ready",
+      "phase": {
+        "in": "Inhale",
+        "hold": "Hold",
+        "out": "Exhale"
+      },
+      "start": "Start",
+      "stop": "Stop",
+      "cyclesLabel": "cycles",
+      "durationLabel": "duration",
+      "langSectionTitle": "Language",
+      "cycleMinusAria": "Fewer cycles",
+      "cyclePlusAria": "More cycles",
+      "suggestLabel": "Suggest a technique",
+      "aboutLabel": "About",
+      "aboutCloseAria": "Close",
+      "aboutDesc": "A guided breathing app — heart coherence and breathwork, no backend, fully local.",
+      "aboutRepoLabel": "View source on GitHub",
+      "aboutSuggestLabel": "Suggest a technique or feature",
+      "aboutChangelogLabel": "Release notes",
+      "aboutLicenseLine": "Distributed under the MIT license"
+    }
+  }
+}

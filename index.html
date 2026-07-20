@@ -498,7 +498,7 @@
   // Garantit un fonctionnement 100% hors ligne même au tout premier lancement
   // si jamais le réseau est indisponible et qu'aucun cache n'existe encore.
   const EMBEDDED_FALLBACK_PATTERNS = {
-    dataVersion: 1,
+    dataVersion: 2,
     techniques: [
       { id:'coherence', defaultCycles:27,
         phases:[ {type:'in', dur:5.5, dir:1}, {type:'out', dur:5.5, dir:-1} ] },
@@ -522,7 +522,7 @@
         phases:(function(){
           const a=[];
           for(let i=0;i<30;i++){ a.push({type:'in',dur:1.5,dir:1}); a.push({type:'out',dur:1.5,dir:-1}); }
-          a.push({type:'hold',dur:60,dir:0}); a.push({type:'in',dur:2,dir:1,target:1}); a.push({type:'hold',dur:15,dir:0});
+          a.push({type:'hold',dur:60,dir:0}); a.push({type:'in',dur:2,dir:1,target:1}); a.push({type:'hold',dur:15,dir:0}); a.push({type:'out',dur:2,dir:-1});
           return a;
         })() }
     ],
@@ -698,81 +698,188 @@
   }
 
   // =========================================================
-  // Langues : liste extensible + dictionnaire de traduction (interface uniquement —
-  // le contenu des techniques/catégories vit dans patternsData, voir plus haut)
+  // Langues / textes d'interface ("chrome") : chargés depuis strings.json,
+  // mis en cache et validés selon la même architecture que patterns.json.
+  // Le contenu des techniques/catégories reste dans patternsData ;
+  // ce bloc ne couvre que les libellés fixes de l'interface.
   // =========================================================
-  const LANGUAGES = [
-    { code:'fr-CA', label:'Français' },
-    { code:'en-US', label:'English' }
+  const STRINGS_URL = './strings.json';
+  const STRINGS_STORAGE_KEY = 'breathapp-strings-v1';
+  const REQUIRED_SHELL_KEYS = [
+    'appTitle','appSubtitle','menuAria','ready','start','stop',
+    'cyclesLabel','durationLabel','langSectionTitle',
+    'cycleMinusAria','cyclePlusAria','suggestLabel','aboutLabel',
+    'aboutCloseAria','aboutDesc','aboutRepoLabel','aboutSuggestLabel',
+    'aboutChangelogLabel','aboutLicenseLine'
   ];
+
+  const EMBEDDED_FALLBACK_STRINGS = {
+    dataVersion: 1,
+    languages: [
+      { code:'fr-CA', label:'Français' },
+      { code:'en-US', label:'English' }
+    ],
+    strings: {
+      'fr-CA': {
+        appTitle:'Respiration',
+        appSubtitle:'Techniques de cohérence cardiaque & breathwork',
+        menuAria:'Ouvrir le menu',
+        ready:'Prêt',
+        phase:{ in:'Inspirer', hold:'Retenir', out:'Expirer' },
+        start:'Débuter', stop:'Arrêter',
+        cyclesLabel:'cycles', durationLabel:'durée',
+        langSectionTitle:'Langue',
+        cycleMinusAria:'Moins de cycles', cyclePlusAria:'Plus de cycles',
+        suggestLabel:'Suggérer une technique',
+        aboutLabel:'À propos',
+        aboutCloseAria:'Fermer',
+        aboutDesc:"Application de respiration guidée — cohérence cardiaque et breathwork, sans backend, 100 % locale.",
+        aboutRepoLabel:'Voir le code sur GitHub',
+        aboutSuggestLabel:'Suggérer une technique ou une fonctionnalité',
+        aboutChangelogLabel:'Notes de version',
+        aboutLicenseLine:'Distribué sous licence MIT'
+      },
+      'en-US': {
+        appTitle:'Breathe',
+        appSubtitle:'Heart-coherence & breathwork techniques',
+        menuAria:'Open menu',
+        ready:'Ready',
+        phase:{ in:'Inhale', hold:'Hold', out:'Exhale' },
+        start:'Start', stop:'Stop',
+        cyclesLabel:'cycles', durationLabel:'duration',
+        langSectionTitle:'Language',
+        cycleMinusAria:'Fewer cycles', cyclePlusAria:'More cycles',
+        suggestLabel:'Suggest a technique',
+        aboutLabel:'About',
+        aboutCloseAria:'Close',
+        aboutDesc:"A guided breathing app — heart coherence and breathwork, no backend, fully local.",
+        aboutRepoLabel:'View source on GitHub',
+        aboutSuggestLabel:'Suggest a technique or feature',
+        aboutChangelogLabel:'Release notes',
+        aboutLicenseLine:'Distributed under the MIT license'
+      }
+    }
+  };
+
+  // ---- Validation stricte (mêmes principes que pour patternsData) ----
+  function validateShellStrings(obj){
+    if(!obj || typeof obj !== 'object') return false;
+    for(const key of REQUIRED_SHELL_KEYS){
+      if(!isPlainString(obj[key], 500)) return false;
+    }
+    if(!obj.phase || typeof obj.phase !== 'object') return false;
+    if(!isPlainString(obj.phase.in, 40) || !isPlainString(obj.phase.hold, 40) || !isPlainString(obj.phase.out, 40)) return false;
+    return true;
+  }
+  function validateStringsData(data){
+    try{
+      if(!data || typeof data !== 'object') return false;
+      if(hasForbiddenKeys(data, 0)) return false;
+      if(!Number.isInteger(data.dataVersion) || data.dataVersion < 1) return false;
+      if(!Array.isArray(data.languages) || data.languages.length < 1 || data.languages.length > 30) return false;
+      for(const l of data.languages){
+        if(!l || typeof l !== 'object') return false;
+        if(!SAFE_LANG_RE.test(l.code)) return false;
+        if(!isPlainString(l.label, 40)) return false;
+      }
+      const codes = data.languages.map(l=>l.code);
+      if(new Set(codes).size !== codes.length) return false;
+      if(!data.strings || typeof data.strings !== 'object') return false;
+      for(const code of codes){
+        if(!validateShellStrings(data.strings[code])) return false;
+      }
+      return true;
+    }catch(e){ return false; }
+  }
+
+  // ---- Cache localStorage (toujours validé) ----
+  function loadCachedStrings(){
+    try{
+      const raw = localStorage.getItem(STRINGS_STORAGE_KEY);
+      if(!raw || raw.length > PATTERNS_MAX_BYTES) return null;
+      const parsed = JSON.parse(raw);
+      if(!validateStringsData(parsed)){
+        localStorage.removeItem(STRINGS_STORAGE_KEY);
+        return null;
+      }
+      return parsed;
+    }catch(e){
+      try{ localStorage.removeItem(STRINGS_STORAGE_KEY); }catch(e2){}
+      return null;
+    }
+  }
+  function saveCachedStrings(data){
+    try{
+      if(!validateStringsData(data)) return false;
+      localStorage.setItem(STRINGS_STORAGE_KEY, JSON.stringify(data));
+      return true;
+    }catch(e){ return false; }
+  }
+  async function fetchRemoteStrings(){
+    try{
+      const controller = new AbortController();
+      const timeoutId = setTimeout(()=>controller.abort(), FETCH_TIMEOUT_MS);
+      const res = await fetch(STRINGS_URL + '?t=' + Date.now(), { signal: controller.signal, cache:'no-store' });
+      clearTimeout(timeoutId);
+      if(!res.ok) return null;
+      const raw = await res.text();
+      if(raw.length > PATTERNS_MAX_BYTES) return null;
+      const data = JSON.parse(raw);
+      if(!validateStringsData(data)) return null;
+      return data;
+    }catch(e){
+      return null;
+    }
+  }
+
+  // ---- Initialisation : cache validé > repli intégré (validé lui aussi) ----
+  let stringsData = loadCachedStrings();
+  if(!stringsData){
+    stringsData = validateStringsData(EMBEDDED_FALLBACK_STRINGS) ? EMBEDDED_FALLBACK_STRINGS : null;
+  }
+  if(!stringsData){
+    // Filet de sécurité ultime — ne devrait jamais se produire
+    stringsData = {
+      dataVersion:0,
+      languages:[{code:'en-US',label:'English'}],
+      strings:{'en-US':{
+        appTitle:'Breathe', appSubtitle:'', menuAria:'Menu', ready:'Ready',
+        phase:{in:'Inhale',hold:'Hold',out:'Exhale'}, start:'Start', stop:'Stop',
+        cyclesLabel:'cycles', durationLabel:'duration', langSectionTitle:'Language',
+        cycleMinusAria:'Fewer', cyclePlusAria:'More', suggestLabel:'Suggest',
+        aboutLabel:'About', aboutCloseAria:'Close', aboutDesc:'', aboutRepoLabel:'GitHub',
+        aboutSuggestLabel:'Suggest', aboutChangelogLabel:'Changelog', aboutLicenseLine:'MIT'
+      }}
+    };
+  }
+
   const FALLBACK_LANG = 'en-US';
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.2.0';
   const REPO_URL = 'https://github.com/lemieuxsamson/breathwork-app';
   const ISSUES_NEW_URL = REPO_URL + '/issues/new';
   const CHANGELOG_URL = REPO_URL + '/blob/main/CHANGELOG.md';
 
-  const I18N = {
-    'fr-CA': {
-      appTitle:'Respiration',
-      appSubtitle:'Techniques de cohérence cardiaque & breathwork',
-      menuAria:'Ouvrir le menu',
-      ready:'Prêt',
-      phase:{ in:'Inspirer', hold:'Retenir', out:'Expirer' },
-      start:'Débuter', stop:'Arrêter',
-      cyclesLabel:'cycles', durationLabel:'durée',
-      langSectionTitle:'Langue',
-      cycleMinusAria:'Moins de cycles', cyclePlusAria:'Plus de cycles',
-      suggestLabel:'Suggérer une technique',
-      aboutLabel:'À propos',
-      aboutCloseAria:'Fermer',
-      aboutDesc:"Application de respiration guidée — cohérence cardiaque et breathwork, sans backend, 100 % locale.",
-      aboutRepoLabel:'Voir le code sur GitHub',
-      aboutSuggestLabel:'Suggérer une technique ou une fonctionnalité',
-      aboutChangelogLabel:'Notes de version',
-      aboutLicenseLine:'Distribué sous licence MIT'
-    },
-    'en-US': {
-      appTitle:'Breathe',
-      appSubtitle:'Heart-coherence & breathwork techniques',
-      menuAria:'Open menu',
-      ready:'Ready',
-      phase:{ in:'Inhale', hold:'Hold', out:'Exhale' },
-      start:'Start', stop:'Stop',
-      cyclesLabel:'cycles', durationLabel:'duration',
-      langSectionTitle:'Language',
-      cycleMinusAria:'Fewer cycles', cyclePlusAria:'More cycles',
-      suggestLabel:'Suggest a technique',
-      aboutLabel:'About',
-      aboutCloseAria:'Close',
-      aboutDesc:"A guided breathing app — heart coherence and breathwork, no backend, fully local.",
-      aboutRepoLabel:'View source on GitHub',
-      aboutSuggestLabel:'Suggest a technique or feature',
-      aboutChangelogLabel:'Release notes',
-      aboutLicenseLine:'Distributed under the MIT license'
-    }
-  };
-
   function detectInitialLang(){
     try{
       const saved = localStorage.getItem('breathapp-lang');
-      if(saved && I18N[saved]) return saved;
+      if(saved && stringsData.strings[saved]) return saved;
     }catch(e){}
     const browserLangs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || FALLBACK_LANG];
     for(const bl of browserLangs){
-      if(I18N[bl]) return bl;
+      if(stringsData.strings[bl]) return bl;
     }
     for(const bl of browserLangs){
       const base = (bl||'').split('-')[0].toLowerCase();
-      const match = Object.keys(I18N).find(code=>code.split('-')[0].toLowerCase()===base);
+      const match = Object.keys(stringsData.strings).find(code=>code.split('-')[0].toLowerCase()===base);
       if(match) return match;
     }
-    return FALLBACK_LANG;
+    return stringsData.strings[FALLBACK_LANG] ? FALLBACK_LANG : Object.keys(stringsData.strings)[0];
   }
 
   let currentLang = detectInitialLang();
 
   function dict(){
-    return I18N[currentLang] || I18N[FALLBACK_LANG];
+    return stringsData.strings[currentLang] || stringsData.strings[FALLBACK_LANG] || stringsData.strings[Object.keys(stringsData.strings)[0]];
   }
   function t(key){
     const parts = key.split('.');
@@ -780,7 +887,7 @@
     for(const p of parts){ node = node && node[p]; }
     if(node === undefined){
       // repli sur la langue par défaut si une clé manque
-      node = I18N[FALLBACK_LANG];
+      node = stringsData.strings[FALLBACK_LANG];
       for(const p of parts){ node = node && node[p]; }
     }
     return node !== undefined ? node : key;
@@ -974,7 +1081,7 @@
   // =========================================================
   function renderLangRow(){
     menuLangRow.innerHTML = '';
-    LANGUAGES.forEach(l=>{
+    stringsData.languages.forEach(l=>{
       const pill = document.createElement('div');
       pill.className = 'lang-pill' + (l.code===currentLang ? ' active' : '');
       pill.textContent = l.label;
@@ -1257,7 +1364,7 @@
   }
 
   function setLanguage(code){
-    if(!I18N[code]) return;
+    if(!stringsData.strings[code]) return;
     currentLang = code;
     try{ localStorage.setItem('breathapp-lang', code); }catch(e){}
     applyLanguage();
@@ -1316,6 +1423,21 @@
       updateCycleDisplay();
       updateDurationDisplay();
     }
+  });
+
+  // Même logique pour les textes d'interface (strings.json), indépendamment des patterns
+  fetchRemoteStrings().then(remote => {
+    if(!remote) return;
+    if(remote.dataVersion === stringsData.dataVersion) return;
+
+    stringsData = remote;
+    saveCachedStrings(remote);
+
+    // Si la langue active n'existe plus dans les nouvelles données, revenir au repli
+    if(!stringsData.strings[currentLang]){
+      currentLang = stringsData.strings[FALLBACK_LANG] ? FALLBACK_LANG : Object.keys(stringsData.strings)[0];
+    }
+    applyLanguage();
   });
 
   // keep screen awake attempt (best-effort, ignored if unsupported)
