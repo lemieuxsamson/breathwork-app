@@ -5,6 +5,12 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.5.1] — 2026-07-20
+
+### Corrigé
+- **Séance de groupe** : rejoindre une séance affichait correctement le cercle animé, les compteurs et les libellés in/hold/out, mais la carte d'en-tête (nom, sous-titre, description de la technique) restait sur l'ancienne technique sélectionnée plutôt que celle de la séance rejointe. `startSyncedSession` change bien `currentTech` en interne (d'où le bon fonctionnement des phases), mais oubliait d'appeler `updateTechCard()` pour rafraîchir l'affichage.
+- Test de non-régression ajouté : sélectionne délibérément une technique différente avant de rejoindre, confirmé en échec sans le correctif et en succès avec.
+
 ## [1.5.0] — 2026-07-20
 
 ### Ajouté — Séance de groupe synchronisée (sans serveur)

@@ -13,7 +13,7 @@
 // listé dans SHELL_ASSETS, et idéalement aligné sur APP_VERSION (index.html)
 // à chaque release — voir CHANGELOG.md / checklist de version.
 
-const CACHE_VERSION = '1.5.0';
+const CACHE_VERSION = '1.5.1';
 const SHELL_CACHE = 'breathapp-shell-' + CACHE_VERSION;
 const DATA_CACHE = 'breathapp-data-' + CACHE_VERSION;
 

@@ -62,6 +62,61 @@ test('générer un code produit le format XXXX-XXXX-XXXX et affiche un décompte
   });
 });
 
+test('rejoindre une séance sur une AUTRE technique que celle affichée met bien à jour l\'en-tête', async () => {
+  await withApp((window, err) => {
+    // Sélectionner "Box" dans le menu principal, pour simuler l'état signalé dans le bug
+    window.eval("document.getElementById('menuBtn').click();");
+    const items = window.document.querySelectorAll('.menu-tech-item');
+    const boxItem = Array.from(items).find(i => i.querySelector('.name').textContent === 'Box');
+    assert.ok(boxItem, 'la technique Box est trouvée dans le menu');
+    boxItem.click();
+    assert.equal(window.document.getElementById('currentTechName').textContent, 'Box', 'en-tête affiche bien Box avant de rejoindre');
+
+    // Rejoindre une séance de groupe sur "Coherence" (index 0) — l'en-tête doit basculer
+    const nowMs = Date.now();
+    const code = encodeSessionCode({ techIndex: 0, cycles: 8, delaySeconds: 0, nowMs: nowMs - 3000 });
+    window.eval("document.getElementById('menuBtn').click();document.getElementById('menuGroupBtn').click();");
+    window.eval("document.getElementById('groupTabJoin').click();");
+    window.document.getElementById('groupCodeInput').value = code;
+    window.eval("document.getElementById('groupJoinBtn').click();");
+
+    assert.equal(err, null);
+    assert.equal(window.document.getElementById('currentTechName').textContent, 'Coherence', 'en-tête doit basculer sur Coherence après la jonction');
+  });
+});
+
+test('rejoindre une séance met aussi à jour l\'état du menu (item actif + catégorie ouverte)', async () => {
+  await withApp((window, err) => {
+    // Sélectionner Box au départ (catégorie "Focus")
+    window.eval("document.getElementById('menuBtn').click();");
+    const items1 = window.document.querySelectorAll('.menu-tech-item');
+    const boxItem = Array.from(items1).find(i => i.querySelector('.name').textContent === 'Box');
+    boxItem.click();
+
+    // Rejoindre une séance sur "sriyantra" (index 7, catégorie "Advanced meditation" — différente de Box)
+    const nowMs = Date.now();
+    const code = encodeSessionCode({ techIndex: 7, cycles: 4, delaySeconds: 0, nowMs: nowMs - 2000 });
+    window.eval("document.getElementById('menuBtn').click();document.getElementById('menuGroupBtn').click();");
+    window.eval("document.getElementById('groupTabJoin').click();");
+    window.document.getElementById('groupCodeInput').value = code;
+    window.eval("document.getElementById('groupJoinBtn').click();");
+
+    assert.equal(err, null);
+
+    window.eval("document.getElementById('menuBtn').click();");
+    const items2 = window.document.querySelectorAll('.menu-tech-item');
+    const activeItem = Array.from(items2).find(i => i.classList.contains('active'));
+    assert.ok(activeItem, 'un item actif existe dans le menu');
+    assert.equal(activeItem.querySelector('.name').textContent, 'Sri Yantra', 'Sri Yantra est marqué actif');
+    assert.equal(activeItem.getAttribute('aria-current'), 'true');
+
+    const categories = window.document.querySelectorAll('.menu-category');
+    const openCat = Array.from(categories).find(c => c.classList.contains('open'));
+    assert.ok(openCat, 'une catégorie est ouverte');
+    assert.equal(openCat.querySelector('.menu-cat-header span').textContent, 'Advanced meditation', 'la catégorie contenant Sri Yantra s\'ouvre automatiquement');
+  });
+});
+
 test('rejoindre une séance en cours place le moteur exactement à la bonne phase/cycle', async () => {
   await withApp((window, err) => {
     // Cohérence (5.5s in / 5.5s out par cycle), démarrée il y a 8s -> 2.5s dans l'expiration
@@ -78,6 +133,10 @@ test('rejoindre une séance en cours place le moteur exactement à la bonne phas
     const label = window.document.getElementById('phase-label').textContent;
     assert.ok(label === 'Exhale' || label === 'Expirer', `libellé attendu "out", obtenu "${label}"`);
     assert.equal(window.document.getElementById('cycleCount').textContent, '10', '0 cycle complété sur 10');
+    // Correctif : l'en-tête (nom/sous-titre de la technique) doit refléter la
+    // technique de la séance rejointe, pas rester sur celle affichée avant.
+    const headerName = window.document.getElementById('currentTechName').textContent;
+    assert.equal(headerName, 'Coherence', `l'en-tête doit afficher "Coherence" (technique de la séance rejointe), obtenu "${headerName}"`);
     assert.ok(!window.document.getElementById('groupModal').classList.contains('open'), 'modale refermée automatiquement');
   });
 });

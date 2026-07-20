@@ -1221,7 +1221,7 @@
   }
 
   const FALLBACK_LANG = 'en-US';
-  const APP_VERSION = '1.5.0';
+  const APP_VERSION = '1.5.1';
   const REPO_URL = 'https://github.com/lemieuxsamson/breathwork-app';
   const ISSUES_NEW_URL = REPO_URL + '/issues/new';
   const CHANGELOG_URL = REPO_URL + '/blob/main/CHANGELOG.md';
@@ -1837,6 +1837,8 @@
 
     currentTech = tech;
     targetCycles = cyclesTarget;
+    updateTechCard(currentTech);
+    renderMenu();
 
     const { cycleNum, phaseIndex: pIdx, elapsedIntoPhaseSec } = locateInSequence(tech.phases, elapsedSeconds);
     const levelBefore = levelBeforePhase(tech.phases, pIdx);
