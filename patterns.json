@@ -1,5 +1,5 @@
 {
-  "dataVersion": 2,
+  "dataVersion": 3,
   "techniques": [
     {
       "id": "coherence",
@@ -7,13 +7,11 @@
       "phases": [
         {
           "type": "in",
-          "dur": 5.5,
-          "dir": 1
+          "dur": 5.5
         },
         {
           "type": "out",
-          "dur": 5.5,
-          "dir": -1
+          "dur": 5.5
         }
       ]
     },
@@ -23,23 +21,19 @@
       "phases": [
         {
           "type": "in",
-          "dur": 4,
-          "dir": 1
+          "dur": 4
         },
         {
           "type": "hold",
-          "dur": 4,
-          "dir": 0
+          "dur": 4
         },
         {
           "type": "out",
-          "dur": 4,
-          "dir": -1
+          "dur": 4
         },
         {
           "type": "hold",
-          "dur": 4,
-          "dir": 0
+          "dur": 4
         }
       ]
     },
@@ -49,18 +43,15 @@
       "phases": [
         {
           "type": "in",
-          "dur": 3,
-          "dir": 1
+          "dur": 3
         },
         {
           "type": "hold",
-          "dur": 6,
-          "dir": 0
+          "dur": 6
         },
         {
           "type": "out",
-          "dur": 9,
-          "dir": -1
+          "dur": 9
         }
       ]
     },
@@ -70,18 +61,15 @@
       "phases": [
         {
           "type": "in",
-          "dur": 4,
-          "dir": 1
+          "dur": 4
         },
         {
           "type": "hold",
-          "dur": 7,
-          "dir": 0
+          "dur": 7
         },
         {
           "type": "out",
-          "dur": 8,
-          "dir": -1
+          "dur": 8
         }
       ]
     },
@@ -91,13 +79,11 @@
       "phases": [
         {
           "type": "in",
-          "dur": 4,
-          "dir": 1
+          "dur": 4
         },
         {
           "type": "out",
-          "dur": 8,
-          "dir": -1
+          "dur": 8
         }
       ]
     },
@@ -107,13 +93,11 @@
       "phases": [
         {
           "type": "in",
-          "dur": 3,
-          "dir": 1
+          "dur": 3
         },
         {
           "type": "out",
-          "dur": 1,
-          "dir": -1
+          "dur": 1
         }
       ]
     },
@@ -123,63 +107,51 @@
       "phases": [
         {
           "type": "in",
-          "dur": 13,
-          "dir": 1
+          "dur": 13
         },
         {
           "type": "out",
-          "dur": 13,
-          "dir": -1
+          "dur": 13
         },
         {
           "type": "in",
-          "dur": 8,
-          "dir": 1
+          "dur": 8
         },
         {
           "type": "out",
-          "dur": 8,
-          "dir": -1
+          "dur": 8
         },
         {
           "type": "in",
-          "dur": 5,
-          "dir": 1
+          "dur": 5
         },
         {
           "type": "out",
-          "dur": 5,
-          "dir": -1
+          "dur": 5
         },
         {
           "type": "in",
-          "dur": 3,
-          "dir": 1
+          "dur": 3
         },
         {
           "type": "out",
-          "dur": 3,
-          "dir": -1
+          "dur": 3
         },
         {
           "type": "in",
-          "dur": 2,
-          "dir": 1
+          "dur": 2
         },
         {
           "type": "out",
-          "dur": 2,
-          "dir": -1
+          "dur": 2
         },
         {
           "type": "in",
-          "dur": 1,
-          "dir": 1
+          "dur": 1
         },
         {
           "type": "out",
-          "dur": 1,
-          "dir": -1
+          "dur": 1
         }
       ]
     },
@@ -189,43 +161,35 @@
       "phases": [
         {
           "type": "in",
-          "dur": 4,
-          "dir": 1
+          "dur": 4
         },
         {
           "type": "out",
-          "dur": 4,
-          "dir": -1
+          "dur": 4
         },
         {
           "type": "in",
-          "dur": 6,
-          "dir": 1
+          "dur": 6
         },
         {
           "type": "out",
-          "dur": 6,
-          "dir": -1
+          "dur": 6
         },
         {
           "type": "in",
-          "dur": 8,
-          "dir": 1
+          "dur": 8
         },
         {
           "type": "out",
-          "dur": 8,
-          "dir": -1
+          "dur": 8
         },
         {
           "type": "in",
-          "dur": 10,
-          "dir": 1
+          "dur": 10
         },
         {
           "type": "out",
-          "dur": 10,
-          "dir": -1
+          "dur": 10
         }
       ]
     },
@@ -236,19 +200,16 @@
         {
           "type": "in",
           "dur": 3.5,
-          "dir": 1,
           "target": 0.75
         },
         {
           "type": "in",
           "dur": 1.2,
-          "dir": 1,
           "target": 1
         },
         {
           "type": "out",
-          "dur": 8,
-          "dir": -1
+          "dur": 8
         }
       ]
     },
@@ -258,324 +219,260 @@
       "phases": [
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "in",
-          "dur": 1.5,
-          "dir": 1
+          "dur": 1.5
         },
         {
           "type": "out",
-          "dur": 1.5,
-          "dir": -1
+          "dur": 1.5
         },
         {
           "type": "hold",
-          "dur": 60,
-          "dir": 0
+          "dur": 60
         },
         {
           "type": "in",
           "dur": 2,
-          "dir": 1,
           "target": 1
         },
         {
           "type": "hold",
-          "dur": 15,
-          "dir": 0
+          "dur": 15
         },
         {
           "type": "out",
-          "dur": 2,
-          "dir": -1
+          "dur": 2
         }
       ]
     }

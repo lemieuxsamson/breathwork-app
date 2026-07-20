@@ -5,6 +5,15 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.2.1] — 2026-07-15
+
+### Modifié
+- Le champ `dir` (direction du mouvement respiratoire, utilisé par le moteur d'animation/son) était stocké en double avec `type` alors qu'il en était toujours entièrement dérivable (`in`→1, `hold`→0, `out`→-1). Il est maintenant calculé à partir de `type` au moment de l'exécution plutôt que lu depuis les données.
+
+### Sécurité
+- Cette redondance masquait une faille de validation : `validatePhase` vérifiait `type` et `dir` indépendamment, sans jamais confirmer leur cohérence mutuelle. Un `patterns.json` malformé aurait pu combiner `type:'in'` avec `dir:-1`, causant un bug visuel/sonore trompeur (libellé « Inspirer » pendant que le cercle rétrécit). En supprimant `dir` du schéma, cette classe de bug est désormais **structurellement impossible**, plutôt que simplement empêchée par une validation.
+- `patterns.json` passe à `dataVersion: 3` (schéma simplifié, rétrocompatible — un `dir` résiduel dans d'anciennes données est simplement ignoré)
+
 ## [1.2.0] — 2026-07-15
 
 ### Corrigé

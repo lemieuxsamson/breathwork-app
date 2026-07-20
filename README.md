@@ -1,7 +1,7 @@
 # Respiration 🌬️
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Version](https://img.shields.io/badge/version-1.2.0-7dd3fc.svg)
+![Version](https://img.shields.io/badge/version-1.2.1-7dd3fc.svg)
 
 Application web de respiration guidée (breathwork & cohérence cardiaque), conçue comme une PWA (Progressive Web App) installable sur l'écran d'accueil iOS/Android — sans backend, sans dépendance externe, 100 % hors ligne après le premier chargement.
 
