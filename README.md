@@ -1,7 +1,7 @@
 # Respiration 🌬️
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Version](https://img.shields.io/badge/version-1.3.0-7dd3fc.svg)
+![Version](https://img.shields.io/badge/version-1.4.0-7dd3fc.svg)
 
 Application web de respiration guidée (breathwork & cohérence cardiaque), conçue comme une PWA (Progressive Web App) installable sur l'écran d'accueil iOS/Android — sans backend, sans dépendance externe, 100 % hors ligne après le premier chargement.
 
@@ -18,6 +18,7 @@ Application web de respiration guidée (breathwork & cohérence cardiaque), con�
 - Menu latéral avec sélection de langue, volume et choix de technique par catégorie
 - Section « À propos » avec numéro de version visible
 - Lien direct vers GitHub Issues pour suggérer une technique ou une fonctionnalité
+- Accessible au clavier et aux lecteurs d'écran : navigation par boutons sémantiques, dialogues avec piège de focus et fermeture au `Escape`, annonces `aria-live` des changements de phase
 
 ## Structure du dépôt
 

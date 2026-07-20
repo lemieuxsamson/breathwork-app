@@ -116,7 +116,12 @@
     padding:10px 14px;
     margin-bottom:14px;
   }
-  #menuVolumeRow #volIcon{font-size:16px;cursor:pointer;flex-shrink:0;}
+  #menuVolumeRow #volIcon{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    background:none;border:none;padding:0;margin:0;
+    font-size:16px;cursor:pointer;flex-shrink:0;
+  }
   #menuVolumeRow input[type=range]{
     -webkit-appearance:none;appearance:none;
     flex:1;height:3px;border-radius:2px;
@@ -148,6 +153,9 @@
     display:flex;flex-wrap:wrap;gap:8px;
   }
   .lang-pill{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    font-family:inherit;
     background:var(--card);
     border:1px solid var(--card-border);
     color:var(--text);
@@ -165,6 +173,9 @@
     margin-bottom:6px;
   }
   .simple-row{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    width:100%;
     display:flex;align-items:center;justify-content:space-between;
     background:var(--card);
     border:1px solid var(--card-border);
@@ -173,6 +184,8 @@
     margin-bottom:8px;
     cursor:pointer;
     text-decoration:none;
+    font-family:inherit;
+    color:inherit;
   }
   .simple-row .row-label{
     font-size:13px;color:var(--text);font-weight:500;
@@ -251,10 +264,15 @@
     border-bottom:1px solid var(--card-border);
   }
   .menu-cat-header{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    width:100%;
     display:flex;align-items:center;justify-content:space-between;
     padding:12px 4px;
     cursor:pointer;
     color:var(--text);
+    background:none;border:none;
+    font-family:inherit;
     font-size:14px;font-weight:600;
   }
   .menu-cat-header .chev{
@@ -270,6 +288,9 @@
   }
   .menu-category.open .menu-cat-list{display:flex;}
   .menu-tech-item{
+    -webkit-appearance:none;appearance:none;
+    -webkit-tap-highlight-color:transparent;
+    width:100%;
     display:flex;align-items:center;justify-content:space-between;
     background:var(--card);
     border:1px solid var(--card-border);
@@ -277,6 +298,8 @@
     padding:10px 12px;
     cursor:pointer;
     text-align:left;
+    font-family:inherit;
+    color:inherit;
   }
   .menu-tech-item.active{
     border-color:var(--accent);
@@ -386,6 +409,15 @@
     background:linear-gradient(135deg, #f87171, #fb923c);
     box-shadow:0 6px 20px rgba(248,113,113,0.25);
   }
+
+  /* Focus clavier visible (jamais masqué à la souris grâce à :focus-visible) */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  [tabindex]:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
 </style>
 </head>
 <body>
@@ -417,7 +449,7 @@
         <circle id="progress-bar" cx="100" cy="100" r="92"></circle>
       </svg>
       <div id="circle">
-        <div id="phase-label">Prêt</div>
+        <div id="phase-label" aria-live="polite">Prêt</div>
         <div id="phase-count"></div>
       </div>
     </div>
@@ -441,32 +473,32 @@
 </div>
 
 <div id="menuOverlay"></div>
-<nav id="menuDrawer">
+<nav id="menuDrawer" role="dialog" aria-modal="true" inert>
   <div id="menuVolumeRow">
-    <span id="volIcon">🔊</span>
-    <input type="range" id="volumeSlider" min="0" max="100" value="80">
+    <button id="volIcon" type="button" aria-label="Volume">🔊</button>
+    <input type="range" id="volumeSlider" min="0" max="100" value="80" aria-label="Volume">
   </div>
   <div id="menuLangSection">
     <div id="menuLangTitle">Langue</div>
-    <div id="menuLangRow"></div>
+    <div id="menuLangRow" role="group" aria-label="Langue"></div>
   </div>
   <div id="menuCategories"></div>
   <div id="menuAboutSection">
     <a id="menuSuggestBtn" class="simple-row" target="_blank" rel="noopener noreferrer">
       <span class="row-label" id="menuSuggestLabel">Suggérer une technique</span>
-      <span class="chev">↗</span>
+      <span class="chev" aria-hidden="true">↗</span>
     </a>
-    <div class="simple-row" id="menuAboutBtn">
+    <button id="menuAboutBtn" type="button" class="simple-row">
       <span class="row-label" id="menuAboutLabel">À propos</span>
-      <span class="chev">›</span>
-    </div>
+      <span class="chev" aria-hidden="true">›</span>
+    </button>
   </div>
 </nav>
 
 <div id="aboutOverlay"></div>
-<div id="aboutModal">
-  <button id="aboutClose" aria-label="Fermer">×</button>
-  <div id="aboutIcon">🌬️</div>
+<div id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutAppName" inert>
+  <button id="aboutClose" type="button" aria-label="Fermer"><span aria-hidden="true">×</span></button>
+  <div id="aboutIcon" aria-hidden="true">🌬️</div>
   <div id="aboutAppName">Respiration</div>
   <div id="aboutVersion">v1.0.0</div>
   <div id="aboutDesc"></div>
@@ -710,7 +742,7 @@
   const STRINGS_URL = './strings.json';
   const STRINGS_STORAGE_KEY = 'breathapp-strings-v1';
   const REQUIRED_SHELL_KEYS = [
-    'appTitle','appSubtitle','menuAria','ready','start','stop',
+    'appTitle','appSubtitle','menuAria','menuDialogAria','volumeAria','ready','start','stop',
     'cyclesLabel','durationLabel','langSectionTitle',
     'cycleMinusAria','cyclePlusAria','suggestLabel','aboutLabel',
     'aboutCloseAria','aboutDesc','aboutRepoLabel','aboutSuggestLabel',
@@ -718,7 +750,7 @@
   ];
 
   const EMBEDDED_FALLBACK_STRINGS = {
-    dataVersion: 1,
+    dataVersion: 2,
     languages: [
       { code:'fr-CA', label:'Français' },
       { code:'en-US', label:'English' }
@@ -728,6 +760,8 @@
         appTitle:'Respiration',
         appSubtitle:'Techniques de cohérence cardiaque & breathwork',
         menuAria:'Ouvrir le menu',
+        menuDialogAria:'Menu de réglages',
+        volumeAria:'Volume',
         ready:'Prêt',
         phase:{ in:'Inspirer', hold:'Retenir', out:'Expirer' },
         start:'Débuter', stop:'Arrêter',
@@ -747,6 +781,8 @@
         appTitle:'Breathe',
         appSubtitle:'Heart-coherence & breathwork techniques',
         menuAria:'Open menu',
+        menuDialogAria:'Settings menu',
+        volumeAria:'Volume',
         ready:'Ready',
         phase:{ in:'Inhale', hold:'Hold', out:'Exhale' },
         start:'Start', stop:'Stop',
@@ -847,7 +883,7 @@
       dataVersion:0,
       languages:[{code:'en-US',label:'English'}],
       strings:{'en-US':{
-        appTitle:'Breathe', appSubtitle:'', menuAria:'Menu', ready:'Ready',
+        appTitle:'Breathe', appSubtitle:'', menuAria:'Menu', menuDialogAria:'Menu', volumeAria:'Volume', ready:'Ready',
         phase:{in:'Inhale',hold:'Hold',out:'Exhale'}, start:'Start', stop:'Stop',
         cyclesLabel:'cycles', durationLabel:'duration', langSectionTitle:'Language',
         cycleMinusAria:'Fewer', cyclePlusAria:'More', suggestLabel:'Suggest',
@@ -858,7 +894,7 @@
   }
 
   const FALLBACK_LANG = 'en-US';
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.4.0';
   const REPO_URL = 'https://github.com/lemieuxsamson/breathwork-app';
   const ISSUES_NEW_URL = REPO_URL + '/issues/new';
   const CHANGELOG_URL = REPO_URL + '/blob/main/CHANGELOG.md';
@@ -1086,8 +1122,11 @@
   function renderLangRow(){
     menuLangRow.innerHTML = '';
     stringsData.languages.forEach(l=>{
-      const pill = document.createElement('div');
-      pill.className = 'lang-pill' + (l.code===currentLang ? ' active' : '');
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      const isActive = l.code===currentLang;
+      pill.className = 'lang-pill' + (isActive ? ' active' : '');
+      pill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       pill.textContent = l.label;
       pill.onclick = () => setLanguage(l.code);
       menuLangRow.appendChild(pill);
@@ -1100,32 +1139,48 @@
     sortedCategories.forEach((cat)=>{
       const catEl = document.createElement('div');
       const containsCurrent = cat.techIds.includes(currentTech.id);
-      catEl.className = 'menu-category' + (containsCurrent ? ' open' : '');
+      const isOpen = containsCurrent;
+      catEl.className = 'menu-category' + (isOpen ? ' open' : '');
 
-      const header = document.createElement('div');
+      const listId = 'catlist-' + cat.id;
+
+      const header = document.createElement('button');
+      header.type = 'button';
       header.className = 'menu-cat-header';
+      header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      header.setAttribute('aria-controls', listId);
       const nameSpan = document.createElement('span');
       nameSpan.textContent = catName(cat.id);
       const chevSpan = document.createElement('span');
       chevSpan.className = 'chev';
+      chevSpan.setAttribute('aria-hidden', 'true');
       chevSpan.textContent = '▾';
       header.appendChild(nameSpan);
       header.appendChild(chevSpan);
       header.onclick = () => {
         const wasOpen = catEl.classList.contains('open');
-        menuCategories.querySelectorAll('.menu-category').forEach(el=>el.classList.remove('open'));
-        if(!wasOpen) catEl.classList.add('open');
+        menuCategories.querySelectorAll('.menu-category').forEach(el=>{
+          el.classList.remove('open');
+          el.querySelector('.menu-cat-header').setAttribute('aria-expanded', 'false');
+        });
+        if(!wasOpen){
+          catEl.classList.add('open');
+          header.setAttribute('aria-expanded', 'true');
+        }
       };
       catEl.appendChild(header);
 
       const list = document.createElement('div');
       list.className = 'menu-cat-list';
+      list.id = listId;
       const sortedTechs = cat.techIds
         .map(id=>({ id, meta:techMeta(id) }))
         .sort((a,b)=>a.meta.name.localeCompare(b.meta.name, currentLang));
       sortedTechs.forEach(({id, meta})=>{
-        const item = document.createElement('div');
+        const item = document.createElement('button');
+        item.type = 'button';
         item.className = 'menu-tech-item' + (id===currentTech.id ? ' active' : '');
+        if(id===currentTech.id) item.setAttribute('aria-current', 'true');
         const wrap = document.createElement('div');
         const nameDiv = document.createElement('div');
         nameDiv.className = 'name';
@@ -1144,13 +1199,48 @@
     });
   }
 
+  // ---- Accessibilité : piège de focus + Escape pour tout élément type dialog ----
+  function getFocusable(container){
+    return Array.from(container.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ));
+  }
+  function handleDialogKeydown(e, container, onEscape){
+    if(e.key === 'Escape'){
+      e.preventDefault();
+      onEscape();
+      return;
+    }
+    if(e.key !== 'Tab') return;
+    const focusables = getFocusable(container);
+    if(focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length-1];
+    if(e.shiftKey && document.activeElement === first){
+      e.preventDefault(); last.focus();
+    } else if(!e.shiftKey && document.activeElement === last){
+      e.preventDefault(); first.focus();
+    }
+  }
+
+  let menuLastFocused = null;
+  function onMenuKeydown(e){ handleDialogKeydown(e, menuDrawer, closeMenu); }
+
   function openMenu(){
+    menuLastFocused = document.activeElement;
+    menuDrawer.inert = false;
     menuDrawer.classList.add('open');
     menuOverlay.classList.add('open');
+    const focusables = getFocusable(menuDrawer);
+    if(focusables[0]) focusables[0].focus();
+    document.addEventListener('keydown', onMenuKeydown);
   }
   function closeMenu(){
     menuDrawer.classList.remove('open');
     menuOverlay.classList.remove('open');
+    menuDrawer.inert = true;
+    document.removeEventListener('keydown', onMenuKeydown);
+    if(menuLastFocused){ menuLastFocused.focus(); menuLastFocused = null; }
   }
   menuBtn.addEventListener('click', openMenu);
   menuOverlay.addEventListener('click', closeMenu);
@@ -1340,6 +1430,9 @@
     appTitleEl.textContent = t('appTitle');
     appSubtitleEl.textContent = t('appSubtitle');
     menuBtn.setAttribute('aria-label', t('menuAria'));
+    menuDrawer.setAttribute('aria-label', t('menuDialogAria'));
+    volIcon.setAttribute('aria-label', t('volumeAria'));
+    volumeSlider.setAttribute('aria-label', t('volumeAria'));
     menuLangTitle.textContent = t('langSectionTitle');
     cyclesLblEl.textContent = t('cyclesLabel');
     durationLblEl.textContent = t('durationLabel');
@@ -1383,14 +1476,25 @@
   aboutSuggestLink.href = ISSUES_NEW_URL;
   aboutChangelogLink.href = CHANGELOG_URL;
 
+  let aboutLastFocused = null;
+  function onAboutKeydown(e){ handleDialogKeydown(e, aboutModal, closeAbout); }
+
   function openAbout(){
     closeMenu();
+    aboutLastFocused = document.activeElement;
+    aboutModal.inert = false;
     aboutOverlay.classList.add('open');
     aboutModal.classList.add('open');
+    const focusables = getFocusable(aboutModal);
+    if(focusables[0]) focusables[0].focus();
+    document.addEventListener('keydown', onAboutKeydown);
   }
   function closeAbout(){
     aboutOverlay.classList.remove('open');
     aboutModal.classList.remove('open');
+    aboutModal.inert = true;
+    document.removeEventListener('keydown', onAboutKeydown);
+    if(aboutLastFocused){ aboutLastFocused.focus(); aboutLastFocused = null; }
   }
   menuAboutBtn.addEventListener('click', openAbout);
   aboutClose.addEventListener('click', closeAbout);

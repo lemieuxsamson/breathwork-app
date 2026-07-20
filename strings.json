@@ -1,5 +1,5 @@
 {
-  "dataVersion": 1,
+  "dataVersion": 2,
   "languages": [
     {
       "code": "fr-CA",
@@ -15,6 +15,8 @@
       "appTitle": "Respiration",
       "appSubtitle": "Techniques de cohérence cardiaque & breathwork",
       "menuAria": "Ouvrir le menu",
+      "menuDialogAria": "Menu de réglages",
+      "volumeAria": "Volume",
       "ready": "Prêt",
       "phase": {
         "in": "Inspirer",
@@ -41,6 +43,8 @@
       "appTitle": "Breathe",
       "appSubtitle": "Heart-coherence & breathwork techniques",
       "menuAria": "Open menu",
+      "menuDialogAria": "Settings menu",
+      "volumeAria": "Volume",
       "ready": "Ready",
       "phase": {
         "in": "Inhale",

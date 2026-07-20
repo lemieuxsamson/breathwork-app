@@ -5,6 +5,22 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [1.4.0] — 2026-07-20
+
+### Ajouté — Accessibilité
+- Tous les éléments interactifs du menu (en-têtes de catégorie, items de technique, pastilles de langue, bouton À propos) sont maintenant de vrais `<button>` plutôt que des `<div onclick>` — utilisables au clavier, correctement annoncés par les lecteurs d'écran
+- Le tiroir menu et la modale À propos ont `role="dialog"` + `aria-modal="true"`, un piège de focus (Tab reste dans le dialogue ouvert), une fermeture au `Escape`, et un retour automatique du focus vers l'élément qui a ouvert le dialogue
+- `aria-live="polite"` sur le libellé de phase — les changements (Inspirer/Retenir/Expirer) sont maintenant annoncés aux lecteurs d'écran sans dépendre uniquement du son
+- `aria-expanded`/`aria-controls` sur les en-têtes de catégorie (accordéon), `aria-pressed` sur les pastilles de langue, `aria-current` sur la technique active
+- Labels ARIA traduits pour le contrôle de volume et le tiroir menu (nouvelles clés `volumeAria`, `menuDialogAria` dans `strings.json`)
+- Indicateur de focus clavier visible (`:focus-visible`) sur tous les éléments interactifs
+
+### Corrigé
+- Le tiroir menu et la modale À propos utilisaient `transform`/`opacity` pour se cacher (pas `display:none`), ce qui permettait à un utilisateur clavier de tabuler dans leur contenu même fermé et invisible à l'écran. Corrigé avec l'attribut `inert`, qui exclut proprement le contenu fermé du parcours clavier et des lecteurs d'écran.
+
+### Tests
+- Suite de tests jsdom dédiée à l'accessibilité : sémantique des boutons, `aria-expanded` de l'accordéon, `Escape` + retour de focus (tiroir et modale), déplacement du focus à l'ouverture, piège de focus (Tab en boucle), présence des labels traduits — 7 tests, tous validés
+
 ## [1.3.0] — 2026-07-15
 
 ### Ajouté
